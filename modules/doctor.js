@@ -1,8 +1,23 @@
 require('colors');
+const rp = require('request-promise-native');
+const version = require('../version');
 
-module.exports = (argv, tools) => {
+module.exports = async (argv, tools) => {
+	// Check cli version
+	let stopWaiting = tools.log.waiter('Checking gok-cli version');
+	try {
+		const resp = await rp('https://raw.githubusercontent.com/gokums/cli/master/version.js');
+		if (resp.version !== version.version) {
+			stopWaiting(` There is new version ${resp.version}, please update with ${'npm update gok-cli -g'.red}`);
+		} else {
+			stopWaiting(' You\'re using latest version');
+		}
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
+	}
+
 	// Check node
-	let stopWaiting = tools.log.waiter('Checking Node.js... ');
+	stopWaiting = tools.log.waiter('Checking Node.js... ');
 	try {
 		const nodeVersion = tools.process.execSync('node --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
 		if (nodeVersion < '8.0.0') {
