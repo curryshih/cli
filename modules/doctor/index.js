@@ -1,16 +1,17 @@
 require('colors');
 const rp = require('request-promise-native');
-const version = require('../version');
+const version = require('../../version');
 
 module.exports = async (argv, tools) => {
 	// Check cli version
-	let stopWaiting = tools.log.waiter('Checking gok-cli version');
+	let stopWaiting = tools.log.waiter('Checking gok-cli...');
 	try {
-		const resp = await rp('https://raw.githubusercontent.com/gokums/cli/master/version.js');
-		if (resp.version !== version.version) {
-			stopWaiting(` There is new version ${resp.version}, please update with ${'npm update gok-cli -g'.red}`);
+		const resp = await rp('https://raw.githubusercontent.com/gokums/cli/master/version.json');
+		const resj = JSON.parse(resp);
+		if (resj.version !== version.version) {
+			stopWaiting(` There is new version ${resj.version}, please update with ${'npm update gok-cli -g'.red}`);
 		} else {
-			stopWaiting(' You\'re using latest version');
+			stopWaiting(` You're using latest ${version.version.green}`);
 		}
 	} catch (err) {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
@@ -119,4 +120,18 @@ module.exports = async (argv, tools) => {
 	} catch (err) {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
+
+	// Check make
+	stopWaiting = tools.log.waiter(`Checking make version... `);
+	try {
+		const makeVersion = tools.process.execSync('make --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+		if (!makeVersion) {
+			stopWaiting(` ${'NG'.red}, please install make`);
+		} else {
+			stopWaiting(` ${'OK'.green}`);
+		}
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
+	}
+
 };
