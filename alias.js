@@ -3,12 +3,12 @@ module.exports = {
 		doc: 'doctor',
 		g: 'generate',
 		r: 'run',
-		m: 'make',
+		b: 'build',
 	},
 	second: {
 		p: 'proto',
 		pj: 'project',
 		s: 'service',
-		m: 'mixer',
+		m: 'gateway',
 	},
 };

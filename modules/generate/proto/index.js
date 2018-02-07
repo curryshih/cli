@@ -24,7 +24,7 @@ module.exports = async (argv, tools) => {
 	}
 
 	const { rootDir, meta } = await tools.getRootMeta();
-	const pfile = `${rootDir}/proto/${data.name}.proto`;
+	const pfile = `${rootDir}/proto/${argv.gateway ? 'gateway/' : ''}${data.name}.proto`;
 
 	if (fs.existsSync(pfile)) {
 		throw new Error(`Proto named ${data.name} exists.`);
