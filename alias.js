@@ -9,5 +9,6 @@ module.exports = {
 		p: 'proto',
 		pj: 'project',
 		s: 'service',
+		m: 'mixer',
 	},
 };

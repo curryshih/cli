@@ -1,3 +1,5 @@
+const yaml = require("node-yaml");
+
 module.exports = async (argv, tools) => {
 	const { log } = tools;
 	// Check root package
@@ -43,7 +45,8 @@ module.exports = async (argv, tools) => {
 			package: rootPackage,
 			createdAt: new Date(),
 		};
-		console.log(metadata);
+		yaml.writeSync(`${rootPath}/root.yaml`, metadata);
+		stopWaiting('done');
 	} catch (err) {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 		throw new Error('Can not generate metadata...');
