@@ -122,7 +122,7 @@ module.exports = async (argv, tools) => {
 	}
 
 	// Check make
-	stopWaiting = tools.log.waiter(`Checking make version... `);
+	stopWaiting = tools.log.waiter('Checking make version... ');
 	try {
 		const makeVersion = tools.process.execSync('make --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
 		if (!makeVersion) {
@@ -134,4 +134,11 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
+	// Check make
+	stopWaiting = tools.log.waiter('Checking GOPATH... ');
+	if (!process.env.GOPATH) {
+		stopWaiting(` ${'NG'.red}, please set up GOPATH environment varialbe`);
+	} else {
+		stopWaiting(` ${'OK'.green}`);
+	}
 };

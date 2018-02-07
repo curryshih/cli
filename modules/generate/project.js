@@ -1,10 +1,10 @@
-const yaml = require("node-yaml");
+const yaml = require('node-yaml');
 
 module.exports = async (argv, tools) => {
 	const { log } = tools;
 	// Check root package
 	const rootPackage = argv._[2];
-	if (!rootPackage || !rootPackage.match(/^[a-z]([a-z0-9_.-]+\/{0,1})+[a-z]+[a-z0-9]*$/)) {
+	if (!rootPackage || !rootPackage.match(tools.regex.path)) {
 		log.ln(`rootPackage ${rootPackage} should start with letter`);
 		log.ln('Example:');
 		log.ln(' good/example/package');

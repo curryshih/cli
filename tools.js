@@ -1,4 +1,8 @@
 const util = require('util');
+const path = require('path');
+const fs = require('fs');
+const yaml = require('node-yaml');
+const mkdirp = require('mkdirp');
 
 const {
 	spawn, spawnSync, exec, execSync,
@@ -23,6 +27,43 @@ module.exports = {
 				console.log(...msgs);
 			};
 		},
+	},
+	regex: {
+		path: /^[a-z]([a-z0-9_.-]+\/{0,1})+[a-z]+[a-z0-9]*$/,
+		name: /^[a-zA-Z]([a-zA-Z0-9]+)$/,
+	},
+	async getRootMeta() {
+		const goPath = process.env.GOPATH;
+		if (!goPath) {
+			throw new Error('GOPATH must be set!');
+		}
+		let rPath = 'root.yaml';
+
+		while (rPath) {
+			const aPath = path.resolve(rPath);
+
+			if (aPath.indexOf(goPath) !== 0) {
+				throw new Error('You are not inside a GOKU project folder!');
+			}
+			if (fs.existsSync(aPath)) {
+				const rootDir = path.dirname(aPath);
+				try {
+					const meta = yaml.readSync(aPath);
+					return { rootDir, meta };
+				} catch (e) {
+					throw new Error('Malformed root.yaml');
+				}
+			}
+			rPath = `../${rPath}`;
+		}
+		return {};
+	},
+	writeFilePath(f, c, o) {
+		const dir = path.dirname(f);
+		if (!fs.existsSync(dir)) {
+			mkdirp(dir);
+		}
+		return fs.writeFileSync(f, c, o);
 	},
 };
 
