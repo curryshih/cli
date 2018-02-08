@@ -3,6 +3,7 @@ module.exports = async () => {
 	console.log(' Subcommands: ');
 	console.log(`  ${'project'.cyan} rootPackage: generate a sandbox project`);
 	console.log(`  ${'proto'.cyan} name -p package: generate a proto file`);
+	console.log(`  ${'gateway'.cyan} name -p package: generate a proto file and a gateway's one`);
 	console.log(`  ${'service'.cyan} name -p package: generate service sandbox`);
 	console.log(`  ${'help'.cyan}: this help...`);
 	process.exit(0);

@@ -1,8 +1,11 @@
 const project = require('./project');
 const proto = require('./proto');
+const gateway = require('./gateway');
 const help = require('./help');
 
-const submodules = { project, proto, help };
+const submodules = {
+	project, proto, help, gateway,
+};
 
 module.exports = async (argv, tools) => {
 	if (typeof submodules[argv._[1]] === 'function') {

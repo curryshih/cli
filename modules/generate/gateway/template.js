@@ -2,7 +2,9 @@ module.exports = (data, meta) => `
 syntax = "proto3";
 
 package ${data.name};
-option go_package = "${meta.package}/src/proto/${data.package ? data.package : ''}${data.package ? '/' : ''}${data.name};${data.name}pb";
+option go_package = "${meta.package}/src/proto/gateway/${data.package ? data.package : ''}${data.package ? '/' : ''}${data.name};${data.name}gw";
+
+import "google/api/annotations.proto";
 
 // This is the list of proto provided by protobuf
 // Use the one that you want
@@ -14,7 +16,12 @@ option go_package = "${meta.package}/src/proto/${data.package ? data.package : '
 
 // Sample service
 service ${data.name}Service {
-	rpc Get${data.name}(${data.name}Request) returns (${data.name}Response);
+	rpc Get${data.name}(${data.name}Request) returns (${data.name}Response) {
+	    option (google.api.http) = {
+	    	post: "/v1/get-${data.name}"
+	    	body: "*"
+	    };
+	}
 }
 
 message ${data.name}Request {

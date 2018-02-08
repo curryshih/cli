@@ -25,7 +25,11 @@ module.exports = async (argv, tools) => {
 	}
 
 	// get all proto file
-	const files = fs.readdirSync(`${rootDir}/proto`);
+	const protoDir = `${rootDir}/proto`;
+	if (!fs.existsSync(protoDir)) {
+		throw new Error('No proto dir');
+	}
+	const files = fs.readdirSync(protoDir);
 	for (let i = 0; i < files.length; i += 1) {
 		const filename = `proto/${files[i]}`;
 		const pfile = `${rootDir}/${filename}`;

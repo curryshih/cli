@@ -65,5 +65,10 @@ module.exports = {
 		}
 		return fs.writeFileSync(f, c, o);
 	},
+	mkdirp(dir) {
+		if (!fs.existsSync(dir)) {
+			mkdirp(dir);
+		}
+	},
 };
 
