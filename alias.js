@@ -4,6 +4,7 @@ module.exports = {
 		g: 'generate',
 		r: 'run',
 		b: 'build',
+		d: 'deploy',
 	},
 	second: {
 		p: 'proto',

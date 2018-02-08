@@ -40,11 +40,9 @@ module.exports = async (argv, tools) => {
 
 	stopWaiting = tools.log.waiter('Furnishing meta...');
 	try {
-		const metadata = {
-			project: 'gokums-sample',
-			package: rootPackage,
-			createdAt: new Date(),
-		};
+		const metadata = yaml.readSync('./root.yaml');
+		metadata.package = rootPackage;
+		metadata.createdAt = new Date();
 		yaml.writeSync(`${rootPath}/root.yaml`, metadata);
 		stopWaiting('done');
 	} catch (err) {

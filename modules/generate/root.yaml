@@ -1,0 +1,31 @@
+project: gokums-sample
+package: github.com/gokums/sample
+createdAt: '0'
+metadata:
+  service:
+    env: [local, dev, stg, prod]
+  gcloud:
+    namespace:
+      dev: dev
+      stg: dev
+      prod: prod
+    cluster: {}
+  tasks:
+    run:
+      var:
+        port:
+          http: 3001
+          rpc: 13001
+      schema:
+        default:
+          build: true
+          cmd: ./build/<%=service.name%>
+          args:
+            - -http=localhost:<%=var.port.http%>
+            - -rpc=localhost:<%=var.port.rpc%>
+          option:
+            env:
+              LOG_SEVERITY_LEVEL: info
+    k8s:
+      clones: []
+    deploy:
