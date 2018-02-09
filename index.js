@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 const minimist = require('minimist');
 const tools = require('./tools');
 const alias = require('./alias');

@@ -1,12 +1,23 @@
 {
-  "name": "gok-cli",
+  "name": "gokums-cli",
   "version": "1.0.0",
-  "description": "Client for Goku Framework",
+  "description": "Client for Gokums Framework",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "keywords": [
+    "gokums",
+    "microservice",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=8.0"
+  },
+  "bin": {
+    "gok": "./index.js"
+  },
+  "author": "Tonny Pham",
   "license": "ISC",
   "dependencies": {
     "colors": "^1.1.2",
