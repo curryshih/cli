@@ -58,4 +58,16 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 		throw new Error('Can not clean up...');
 	}
+
+	// Reinit git
+	stopWaiting = tools.log.waiter('Preparing breakfast... ');
+	try {
+		tools.process.execSync('git init', { cwd: rootPath, stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
+		tools.process.execSync('git add .', { cwd: rootPath, stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
+		tools.process.execSync('git ci -m "First commit"', { cwd: rootPath, stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
+		stopWaiting('done');
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
+		throw new Error('Can not clean up...');
+	}
 };
