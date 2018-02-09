@@ -58,6 +58,46 @@ module.exports = {
 		}
 		return {};
 	},
+	getServiceManifest() {
+		const goPath = process.env.GOPATH;
+		if (!goPath) {
+			throw new Error('GOPATH must be set!');
+		}
+		let mPath = 'manifest.yaml';
+
+		while (mPath) {
+			const aPath = path.resolve(mPath);
+
+			if (aPath.indexOf(goPath) !== 0) {
+				return null;
+			}
+			if (fs.existsSync(aPath)) {
+				const svcDir = path.dirname(aPath);
+				try {
+					const manifest = yaml.readSync(aPath);
+					return { svcDir, manifest };
+				} catch (e) {
+					throw new Error('Malformed manifest.yaml');
+				}
+			}
+			mPath = `../${mPath}`;
+		}
+		return null;
+	},
+	async findServices(rootDir) {
+		const { stdout } = await execPromise(`find ${rootDir}/src/service -type f -name manifest.yaml`);
+		const files = stdout.split('\n').filter(f => !!f.trim());
+		if (!files) {
+			return [];
+		}
+		const mans = {};
+		await Promise.all(files.map(async (fname) => {
+			const manifest = yaml.readSync(fname);
+			const svcDir = path.dirname(fname);
+			mans[manifest.service.name] = { svcDir, manifest };
+		}));
+		return mans;
+	},
 	writeFilePath(f, c, o) {
 		const dir = path.dirname(f);
 		if (!fs.existsSync(dir)) {

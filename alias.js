@@ -10,6 +10,6 @@ module.exports = {
 		p: 'proto',
 		pj: 'project',
 		s: 'service',
-		g: 'gateway',
+		gw: 'gateway',
 	},
 };

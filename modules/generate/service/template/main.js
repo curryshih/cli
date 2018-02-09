@@ -8,8 +8,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"golang.org/x/net/context"
-
 	"google.golang.org/grpc"
 
 	"github.com/gokums/core/log"
@@ -27,7 +25,7 @@ func init() {
 
 func main() {
 
-	ctx := context.Background()
+	// ctx := context.Background()
 	handler := httpx.NewHandler()
 
 	go func() {
@@ -39,7 +37,7 @@ func main() {
 	srv := grpc.NewServer()
 	// Register the pb server
 	// protobufpb.RegisterServer(srv, rpc.NewRPC())
-	grpc_prometheus.Register(srv)
+	// grpc_prometheus.Register(srv)
 
 	lis, err := net.Listen("tcp", *rpcBind)
 	if err != nil {
