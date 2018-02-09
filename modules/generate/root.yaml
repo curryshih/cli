@@ -14,8 +14,9 @@ metadata:
     run:
       var:
         port:
-          http: 3001
-          rpc: 13001
+          http: <%=tools.next(3001)%>
+          rpc: <%=tools.next(13001)%>
+          prefix: dev
       schema:
         default:
           build: true

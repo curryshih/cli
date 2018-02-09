@@ -67,8 +67,31 @@ module.exports = {
 	},
 	mkdirp(dir) {
 		if (!fs.existsSync(dir)) {
-			mkdirp(dir);
+			mkdirp.sync(dir);
+			return true;
 		}
+		return false;
+	},
+	async wait(time) {
+		const msec = parseInt(time, 10);
+		return new Promise((resolve) => {
+			setTimeout(() => resolve(), msec * 1000);
+		});
+	},
+	generator: {
+		init() {
+			const gens = {};
+			const succ = function* succ(start) {
+				let idx = start;
+				while (idx < Infinity) {
+					yield idx += 1;
+				}
+			};
+			return (num) => {
+				if (!gens[num]) gens[num] = succ(num);
+				return gens[num].next().value;
+			};
+		},
 	},
 };
 
