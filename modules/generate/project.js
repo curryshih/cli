@@ -64,7 +64,7 @@ module.exports = async (argv, tools) => {
 	try {
 		tools.process.execSync('git init', { cwd: rootPath, stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
 		tools.process.execSync('git add .', { cwd: rootPath, stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
-		tools.process.execSync('git ci -m "First commit"', { cwd: rootPath, stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
+		tools.process.execSync('git commit -qm "First commit"', { cwd: rootPath, stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
 		stopWaiting('done');
 	} catch (err) {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
