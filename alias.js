@@ -3,6 +3,7 @@ module.exports = {
 		doc: 'doctor',
 		g: 'generate',
 		r: 'run',
+		f: 'flag',
 		b: 'build',
 		d: 'deploy',
 	},
