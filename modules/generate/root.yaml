@@ -20,7 +20,7 @@ metadata:
       schema:
         default:
           build: true
-          cmd: ./build/<%=service.name%>
+          cmd: ./.build/<%=service.name%>
           args:
             - -http=localhost:<%=var.port.http%>
             - -rpc=localhost:<%=var.port.rpc%>

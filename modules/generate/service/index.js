@@ -52,7 +52,7 @@ module.exports = async (argv, tools) => {
 		waiterEnd(' ok.');
 	} catch (e) {
 		waiterEnd(' ng.'.red);
-		console.log(e.stack);
+		if (process.env.GOKUMS_VERBOSE) console.log(e.stack);
 		throw e;
 	}
 };

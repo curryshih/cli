@@ -69,7 +69,7 @@ module.exports = {
 			const aPath = path.resolve(mPath);
 
 			if (aPath.indexOf(goPath) !== 0) {
-				return null;
+				return {};
 			}
 			if (fs.existsSync(aPath)) {
 				const svcDir = path.dirname(aPath);
@@ -82,7 +82,7 @@ module.exports = {
 			}
 			mPath = `../${mPath}`;
 		}
-		return null;
+		return {};
 	},
 	async findServices(rootDir) {
 		const { stdout } = await execPromise(`find ${rootDir}/src/service -type f -name manifest.yaml`);
