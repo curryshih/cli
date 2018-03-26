@@ -141,4 +141,31 @@ module.exports = async (argv, tools) => {
 	} else {
 		stopWaiting(` ${'OK'.green}`);
 	}
+
+	// Check protoc-gen-go
+	stopWaiting = tools.log.waiter('Checking protoc-gen-go... ');
+	try {
+		tools.process.execSync('which protoc-gen-go', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+		stopWaiting(` ${'OK'.green}`);
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}, please install protoc-gen-go`);
+	}
+
+	// check protoc-gen-grpc-gateway
+	stopWaiting = tools.log.waiter('Checking protoc-gen-grpc-gateway... ');
+	try {
+		tools.process.execSync('which protoc-gen-grpc-gateway', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+		stopWaiting(` ${'OK'.green}`);
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}, please install protoc-gen-grpc-gateway with ${'go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway'.yellow}`);
+	}
+
+	// @check protoc-gen-govalidators
+	stopWaiting = tools.log.waiter('Checking protoc-gen-govalidators... ');
+	try {
+		tools.process.execSync('which protoc-gen-govalidators', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+		stopWaiting(` ${'OK'.green}`);
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}, please install protoc-gen-grpc-govalidators with ${'go get github.com/gokums/go-proto-validators/protoc-gen-govalidators'.yellow}`);
+	}
 };

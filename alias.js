@@ -12,5 +12,6 @@ module.exports = {
 		pj: 'project',
 		s: 'service',
 		gw: 'gateway',
+		v: 'validator',
 	},
 };
