@@ -1,10 +1,11 @@
 const fs = require('fs');
+const pascalize = require('pascal-case');
 
 const template = require('./template');
 
 module.exports = async (argv, tools) => {
 	const { log } = tools;
-	const packageName = argv._[2];
+	const packageName = pascalize(argv._[2] || '').toLowerCase();
 
 	if (!packageName || !packageName.match(tools.regex.name)) {
 		log.ln(`protoName ${packageName} should only contain letter and number`);

@@ -1,8 +1,13 @@
-module.exports = (data, meta) => `
-syntax = "proto3";
+const pascalize = require('pascal-case');
 
-package ${data.name};
-option go_package = "${meta.package}/src/proto/gateway/${data.package ? data.package : ''}${data.package ? '/' : ''}${data.name};${data.name}gw";
+module.exports = (data, meta) => {
+	const sname = pascalize(data.name);
+	const lowname = data.name.toLowerCase();
+
+	return `syntax = "proto3";
+
+package ${lowname};
+option go_package = "${meta.package}/src/proto/gateway/${data.package ? data.package : ''}${data.package ? '/' : ''}${lowname};${lowname}gw";
 
 import "google/api/annotations.proto";
 
@@ -14,21 +19,33 @@ import "google/api/annotations.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 
+// Uncomment this line if you're using validator
+// import "validator.proto";
+// Format: type Name = 1 [(validator.field) = {int_gt: 0, int_lt: 100}];
+// List of validators:
+//   Message: msg_exists, human_error
+//   String: regex, string_not_empty, length_eq, length_gt, length_lt
+// 	 Int: int_gt, int_lt
+// 	 Float, Double: float_gt, float_lt, float_epsilon, float_gte, float_lte
+//   Repeated: repeated_count_min, repeated_count_max
+//   Bytes: length_eq, length_gt, length_lt
+
 // Sample service
-service ${data.name}Service {
-	rpc Get${data.name}(${data.name}Request) returns (${data.name}Response) {
+service ${sname}Service {
+	rpc Get${sname}(${sname}Request) returns (${sname}Response) {
 	    option (google.api.http) = {
-	    	post: "/v1/get-${data.name}"
+	    	post: "/v1/get-${lowname}"
 	    	body: "*"
 	    };
 	}
 }
 
-message ${data.name}Request {
+message ${sname}Request {
 	string id = 1;
 }
 
-message ${data.name}Response {
+message ${sname}Response {
 	string message = 1;
 }
 `;
+};

@@ -10,11 +10,13 @@ module.exports = async (argv, tools) => {
 		throw new Error('GOPATH does not exist');
 	}
 	const outDir = `${process.env.GOPATH}/src`;
+
 	if (!fs.existsSync(outDir)) {
 		fs.mkdirSync(outDir);
 	}
 
 	const gateway = true;
+	const validator = !!argv.v;
 
 	if (argv._[2]) {
 		const filename = `proto/gateway/${argv._[2]}.proto`;
@@ -23,7 +25,7 @@ module.exports = async (argv, tools) => {
 			throw new Error('Bad proto name');
 		}
 		await singleGenerate({
-			filename, rootDir, outDir, gateway,
+			filename, rootDir, outDir, gateway, validator,
 		}, tools);
 		return;
 	}
@@ -39,13 +41,9 @@ module.exports = async (argv, tools) => {
 		const pfile = `${rootDir}/${filename}`;
 		const lst = fs.lstatSync(pfile);
 
-		// Need to build outDir
-		const gwOutdir = `${outDir}/${meta.package}/src/proto`;
-		tools.mkdirp(gwOutdir);
-
 		if (lst.isFile() && pfile.endsWith('.proto')) {
 			await singleGenerate({
-				filename, rootDir, gateway, outDir, gwOutdir,
+				filename, rootDir, gateway, outDir, validator,
 			}, tools);
 		}
 	}

@@ -14,13 +14,17 @@ module.exports = async (argv, tools) => {
 		fs.mkdirSync(outDir);
 	}
 
+	const validator = !!argv.v;
+
 	if (argv._[2]) {
 		const filename = `proto/${argv._[2]}.proto`;
 		const pfile = `${rootDir}/${filename}`;
 		if (!fs.existsSync(pfile)) {
 			throw new Error('Bad proto name');
 		}
-		await singleGenerate({ filename, rootDir, outDir }, tools);
+		await singleGenerate({
+			filename, rootDir, outDir, validator,
+		}, tools);
 		return;
 	}
 
@@ -35,7 +39,9 @@ module.exports = async (argv, tools) => {
 		const pfile = `${rootDir}/${filename}`;
 		const lst = fs.lstatSync(pfile);
 		if (lst.isFile() && pfile.endsWith('.proto')) {
-			await singleGenerate({ filename, rootDir, outDir }, tools);
+			await singleGenerate({
+				filename, rootDir, outDir, validator,
+			}, tools);
 		}
 	}
 };
