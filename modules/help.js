@@ -5,6 +5,7 @@ module.exports = async () => {
 	console.log(`  ${'build'.green}: Build codes, alias: b`);
 	console.log(`  ${'flag'.green}: Operation with flag arguments, alias: f`);
 	console.log(`  ${'doctor'.green}: Check current environment, alias: doc`);
+	console.log(`  ${'navigate'.green}: Navigation, alias: nav`);
 	console.log(`  ${'version'.green}: Print curent version`);
 	console.log(`  ${'help'.green}: this help...`);
 	process.exit(0);

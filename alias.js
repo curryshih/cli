@@ -6,6 +6,7 @@ module.exports = {
 		f: 'flag',
 		b: 'build',
 		d: 'deploy',
+		nav: 'navigate',
 	},
 	second: {
 		p: 'proto',

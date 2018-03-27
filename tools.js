@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const yaml = require('node-yaml');
 const mkdirp = require('mkdirp');
+const os = require('os');
 
 const {
 	spawn, spawnSync, exec, execSync,
@@ -83,6 +84,41 @@ module.exports = {
 			mPath = `../${mPath}`;
 		}
 		return {};
+	},
+	cacheClear() {
+		execSync(`rm -rf ${os.tmpdir()}/.gokums.*`);
+	},
+	cache(key, obj) {
+		const tmpfn = `${os.tmpdir()}/.gokums.${key}.json`;
+		try {
+			if (!obj) {
+				const content = fs.readFileSync(tmpfn);
+				return JSON.parse(content);
+			}
+			this.writeFilePath(tmpfn, JSON.stringify(obj));
+			return true;
+		} catch (e) {
+			this.cacheClear();
+			return null;
+		}
+	},
+	async findProjects() {
+		const { stdout } = await execPromise(`find ${process.env.GOPATH}/src -type f -name root.yaml`);
+		const files = stdout.split('\n').filter(f => !!f.trim());
+		if (!files) {
+			return [];
+		}
+		const mans = {};
+		await Promise.all(files.map(async (fname) => {
+			try {
+				const manifest = yaml.readSync(fname);
+				const rootDir = path.dirname(fname);
+				mans[manifest.project] = { rootDir, manifest };
+			} catch (e) {
+				// Ignore non valid file
+			}
+		}));
+		return mans;
 	},
 	async findServices(rootDir) {
 		const { stdout } = await execPromise(`find ${rootDir}/src/service -type f -name manifest.yaml`);

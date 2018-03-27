@@ -9,10 +9,11 @@ const help = require('./modules/help');
 const generate = require('./modules/generate');
 const build = require('./modules/build');
 const flag = require('./modules/flag');
+const navigate = require('./modules/nav');
 
 const argv = minimist(process.argv.slice(2));
 const modules = {
-	doctor, version, help, generate, build, flag,
+	doctor, version, help, generate, build, flag, navigate,
 };
 
 // Alias first and second params of argv._
