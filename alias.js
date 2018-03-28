@@ -14,5 +14,6 @@ module.exports = {
 		s: 'service',
 		gw: 'gateway',
 		v: 'validator',
+		rm: 'remove',
 	},
 };

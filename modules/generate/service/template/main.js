@@ -38,7 +38,7 @@ func main() {
 
 	// muxSrv := runtime.NewServeMux(runtime.WithMarshalerOption("*", &gateway.JSONPb{OrigName: true}))
 	// opts := []grpc.DialOption{grpc.WithInsecure(), grpc.WithBlock()}
-	// err = vdsmixerpb.RegisterGwMixerHandlerFromEndpoint(ctx, muxSrv, "localhost"+*args.RPCBind, opts)
+	// err = gatewaypb.RegisterGwMixerHandlerFromEndpoint(ctx, muxSrv, "localhost"+*args.RPCBind, opts)
 	// if err != nil {
 	// 	log.Fatalf("register endpoint failed: %v", err)
 	// }

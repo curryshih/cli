@@ -5,9 +5,10 @@ const template = require('./template');
 
 module.exports = async (argv, tools) => {
 	const { log } = tools;
-	const packageName = pascalize(argv._[2] || '').toLowerCase();
+	const packageName = argv._[2] || '';
+	const fileName = pascalize(packageName).toLowerCase();
 
-	if (!packageName || !packageName.match(tools.regex.name)) {
+	if (!packageName || !fileName.match(tools.regex.name)) {
 		log.ln(`protoName ${packageName} should only contain letter and number`);
 		log.ln('Example:');
 		log.ln(' goodName');
@@ -25,10 +26,10 @@ module.exports = async (argv, tools) => {
 	}
 
 	const { rootDir, meta } = await tools.getRootMeta();
-	const pfile = `${rootDir}/proto/${data.name}.proto`;
+	const pfile = `${rootDir}/proto/${fileName}.proto`;
 
 	if (fs.existsSync(pfile)) {
-		throw new Error(`Proto named ${data.name} exists.`);
+		throw new Error(`Proto named proto/${fileName}.proto exists.`);
 	}
 
 	const protoContent = template(data, meta);

@@ -5,7 +5,7 @@ module.exports = async (argv, tools) => {
 	if (argv._[2] && !argv._[2].match(tools.regex.name)) {
 		throw new Error('Bad proto name');
 	}
-	const { rootDir, meta } = await tools.getRootMeta();
+	const { rootDir } = await tools.getRootMeta();
 	if (!fs.existsSync(process.env.GOPATH)) {
 		throw new Error('GOPATH does not exist');
 	}

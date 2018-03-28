@@ -2,12 +2,12 @@ const pascalize = require('pascal-case');
 
 module.exports = (data, meta) => {
 	const sname = pascalize(data.name);
-	const lowname = data.name.toLowerCase();
+	const lowname = sname.toLowerCase();
 
 	return `syntax = "proto3";
 
 package ${lowname};
-option go_package = "${meta.package}/src/proto/gateway/${data.package ? data.package : ''}${data.package ? '/' : ''}${lowname};${lowname}gw";
+option go_package = "${meta.package}/src/proto/gateway/${data.package ? data.package : ''}${data.package ? '/' : ''}${lowname};${lowname}pb";
 
 import "google/api/annotations.proto";
 

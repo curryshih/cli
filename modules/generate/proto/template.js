@@ -2,7 +2,7 @@ const pascalize = require('pascal-case');
 
 module.exports = (data, meta) => {
 	const sname = pascalize(data.name);
-	const lowname = data.name.toLowerCase();
+	const lowname = sname.toLowerCase();
 	return `syntax = "proto3";
 
 package ${lowname};
