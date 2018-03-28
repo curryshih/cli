@@ -1,5 +1,7 @@
 const dockertpl = require('./template/docker');
 const maintpl = require('./template/main');
+const flagtpl = require('./template/flag');
+
 const yaml = require('node-yaml');
 
 module.exports = async (argv, tools) => {
@@ -21,33 +23,40 @@ module.exports = async (argv, tools) => {
 
 	const waiterEnd = tools.log.waiter('Start munching...');
 	try {
-		const manifest = { service: { name: serviceName } };
-		const { rootDir } = await tools.getRootMeta();
-		let servicePath = `${rootDir}/src/service`;
+		const { rootDir, meta } = await tools.getRootMeta();
+		const serviceRoot = `${rootDir}/src/service`;
+		let servicePath = serviceName;
 		if (packagePath) {
-			servicePath = `${servicePath}/${packagePath}`;
+			servicePath = `${packagePath}/${serviceName}`;
 		}
-		servicePath = `${servicePath}/${serviceName}`;
+		const serviceAbsPath = `${serviceRoot}/${servicePath}`;
 
-		const success = tools.mkdirp(servicePath);
+		const success = tools.mkdirp(serviceAbsPath);
 		if (!success) {
 			throw new Error(`${serviceName} service exists.`);
 		}
 
+		const manifest = { service: { name: serviceName, path: servicePath } };
+
 		// manifest.yaml
-		yaml.writeSync(`${servicePath}/manifest.yaml`, manifest);
+		yaml.writeSync(`${serviceAbsPath}/manifest.yaml`, manifest);
 
 		// Dockerfile
 		const dockerfile = dockertpl(manifest);
-		tools.writeFilePath(`${servicePath}/Dockerfile`, dockerfile);
+		tools.writeFilePath(`${serviceAbsPath}/Dockerfile`, dockerfile);
 
 		// Main file
-		const mainfile = maintpl();
-		tools.writeFilePath(`${servicePath}/main.go`, mainfile);
+		const mainfile = maintpl(meta, manifest);
+		tools.writeFilePath(`${serviceAbsPath}/main.go`, mainfile);
 
 		// Create folders
-		tools.mkdirp(`${servicePath}/k8s`);
-		tools.mkdirp(`${servicePath}/internal/rpc`);
+		tools.mkdirp(`${serviceAbsPath}/k8s`);
+		tools.mkdirp(`${serviceAbsPath}/args`);
+		tools.mkdirp(`${serviceAbsPath}/internal/rpc`);
+
+		// Flag file
+		const flagfile = flagtpl();
+		tools.writeFilePath(`${serviceAbsPath}/args/flag.go`, flagfile);
 
 		waiterEnd(' ok.');
 	} catch (e) {
