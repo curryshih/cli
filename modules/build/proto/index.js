@@ -1,11 +1,24 @@
 const fs = require('fs');
+const ojp = require('object-path');
+const yaml = require('node-yaml');
+
 const singleGenerate = require('./single');
+const config = require('./config');
 
 module.exports = async (argv, tools) => {
 	if (argv._[2] && !argv._[2].match(tools.regex.name)) {
 		throw new Error('Bad proto name');
 	}
-	const { rootDir } = await tools.getRootMeta();
+	const { rootDir, meta } = await tools.getRootMeta();
+	const paths = ojp.get(meta, 'config.proto.paths');
+	const mappings = ojp.get(meta, 'config.proto.mappings');
+
+	if (!paths || !mappings) {
+		if (!paths) ojp.set(meta, 'config.proto.paths', config.defaultPath);
+		if (!mappings) ojp.set(meta, 'config.proto.mappings', config.defaultMapping);
+		yaml.writeSync(`${rootDir}/root.yaml`, meta);
+	}
+
 	if (!fs.existsSync(process.env.GOPATH)) {
 		throw new Error('GOPATH does not exist');
 	}
@@ -23,7 +36,12 @@ module.exports = async (argv, tools) => {
 			throw new Error('Bad proto name');
 		}
 		await singleGenerate({
-			filename, rootDir, outDir, validator,
+			filename,
+			rootDir,
+			outDir,
+			validator,
+			paths: paths || config.defaultPath,
+			mappings: mappings || config.defaultMapping,
 		}, tools);
 		return;
 	}
@@ -40,7 +58,12 @@ module.exports = async (argv, tools) => {
 		const lst = fs.lstatSync(pfile);
 		if (lst.isFile() && pfile.endsWith('.proto')) {
 			await singleGenerate({
-				filename, rootDir, outDir, validator,
+				filename,
+				rootDir,
+				outDir,
+				validator,
+				paths: paths || config.defaultPath,
+				mappings: mappings || config.defaultMapping,
 			}, tools);
 		}
 	}

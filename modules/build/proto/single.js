@@ -1,11 +1,13 @@
-const validatorProto = 'validator.proto=github.com/gokums/go-proto-validators';
-const protocPath = '-Iproto -Ivendor/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis -Ivendor/github.com/gokums/go-proto-validators';
+const config = require('./config');
 
 module.exports = async (data, tools) => {
 	const { gateway, validator } = data;
 
-	let command = `protoc ${protocPath} --go_out=M${validatorProto},plugins=grpc:${data.outDir}`;
-	if (validator) command = `${command} --govalidators_out=M${validatorProto}:${data.outDir}`;
+	const paths = config.buildPath(data.paths);
+	const mappings = config.buildMapping(data.mappings);
+
+	let command = `protoc -Iproto ${paths} --go_out=${mappings},plugins=grpc:${data.outDir}`;
+	if (validator) command = `${command} --govalidators_out=${mappings}:${data.outDir}`;
 	let stopWaiting;
 
 	if (gateway) {
