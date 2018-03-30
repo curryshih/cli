@@ -43,7 +43,7 @@ This repo defines the implementation for the CLI subsystem of Gok. It also serve
 - *nix system such as:
   - Apple MacOS (currently executing on MacOS 10.13.x High Sierra)
   - Linux such as Ubuntu (not officially tested, but *should work*)
-  - BSD Unix (not officially test, but *should work*)
+  - BSD Unix (not officially tested, but *should work*)
   - etc
 
 Window's users could consider running a VM or installing ["Windows Subsystem for Linux"](https://github.com/Microsoft/WSL).
