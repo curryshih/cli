@@ -30,19 +30,19 @@ This repo defines the implementation for the CLI subsystem of Gok. It also serve
   - Alternative, Recommendation for MacOS.
     - Use Homebrew to install `protobuf`
 - git
-  - For MacOS users, this will come with XCode or the UNIX Command Line tools.
+  - For MacOS users, this comes with XCode or the UNIX Command Line tools.
 - Docker
   - For MacOS users, recommend installing [Docker Community Edition for Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac).
 - Golang dependency manager dep
   - [Installation Guide](https://github.com/golang/dep)
 - make
-  - For MacOS users, this will come with XCode or the UNIX Command Line tools.
+  - For MacOS users, this comes with XCode or the UNIX Command Line tools.
 
 ### Operating System
 
 - *nix system such as:
   - Apple MacOS (currently executing on MacOS 10.13.x High Sierra)
-  - Linux such as Ubuntu (not officially test, but *should work*)
+  - Linux such as Ubuntu (not officially tested, but *should work*)
   - BSD Unix (not officially test, but *should work*)
   - etc
 
