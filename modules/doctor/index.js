@@ -4,12 +4,12 @@ const version = require('../../version');
 
 module.exports = async (argv, tools) => {
 	// Check cli version
-	let stopWaiting = tools.log.waiter('Checking gok-cli...');
+	let stopWaiting = tools.log.waiter('Checking gokums-cli...');
 	try {
 		const resp = await rp('https://raw.githubusercontent.com/gokums/cli/master/version.json');
 		const resj = JSON.parse(resp);
 		if (resj.version !== version.version) {
-			stopWaiting(` There is new version ${resj.version}, please update with ${'npm update gok-cli -g'.red}`);
+			stopWaiting(` There is new version ${resj.version}, please update with ${'npm update gokums-cli -g'.red}`);
 		} else {
 			stopWaiting(` You're using latest ${version.version.green}`);
 		}
