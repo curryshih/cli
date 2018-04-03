@@ -137,7 +137,7 @@ module.exports = {
 	writeFilePath(f, c, o) {
 		const dir = path.dirname(f);
 		if (!fs.existsSync(dir)) {
-			mkdirp(dir);
+			this.mkdirp(dir);
 		}
 		return fs.writeFileSync(f, c, o);
 	},
