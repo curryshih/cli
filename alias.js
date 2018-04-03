@@ -15,5 +15,6 @@ module.exports = {
 		gw: 'gateway',
 		v: 'validator',
 		rm: 'remove',
+		sp: 'spawn',
 	},
 };

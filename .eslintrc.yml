@@ -6,6 +6,7 @@ rules:
     - tab
   no-tabs: 0
   no-await-in-loop: 0
+  no-continue: 0
 env:
   node: true
   browser: false

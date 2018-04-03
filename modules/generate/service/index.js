@@ -36,7 +36,23 @@ module.exports = async (argv, tools) => {
 			throw new Error(`${serviceName} service exists.`);
 		}
 
-		const manifest = { service: { name: serviceName, path: servicePath } };
+		const manifest = {
+			service: { name: serviceName, path: servicePath },
+			metadata: {
+				flags: {
+					'rpc-bind': {
+						type: 'String',
+						value: '9009',
+						usage: 'port to bind rpc',
+					},
+					'http-bind': {
+						type: 'String',
+						value: '9019',
+						usage: 'port to bind http',
+					},
+				},
+			},
+		};
 
 		// manifest.yaml
 		yaml.writeSync(`${serviceAbsPath}/manifest.yaml`, manifest);
