@@ -72,10 +72,8 @@ gok doctor
 
 If all is OK, you should see something like:
 
-- [ ] TODO Fix output below
-
 ```text
-Checking gokums-cli...OK
+Checking gokums-cli... You're using latest 1.0.8
 Checking Node.js...  version 8.4.0 OK
 Checking Golang... go version go1.9.4 darwin/amd64 OK
 Checking gcloud...  OK
@@ -90,3 +88,7 @@ Checking protoc-gen-go...  OK
 Checking protoc-gen-grpc-gateway...  OK
 Checking protoc-gen-govalidators...  OK
 ```
+
+## Usage
+
+Please refer to [usage guide](docs/usage.md).
