@@ -1,7 +1,7 @@
 module.exports = {
 	defaultMapping: {
 		'validator.proto': 'github.com/gokums/go-proto-validators',
-		'google/api/annotations.proto': 'github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis/google/api',
+		'google/api/annotations.proto': 'google.golang.org/genproto/googleapis/api/annotations',
 	},
 	defaultPath: [
 		'vendor/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis',
