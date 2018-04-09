@@ -1,6 +1,7 @@
 require('colors');
 const rp = require('request-promise-native');
 const version = require('../../version');
+const fs = require('fs');
 
 module.exports = async (argv, tools) => {
 	// Check cli version
@@ -155,11 +156,20 @@ module.exports = async (argv, tools) => {
 	stopWaiting = tools.log.waiter('Checking protoc-gen-grpc-gateway... ');
 	try {
 		tools.process.execSync('which protoc-gen-grpc-gateway', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-		stopWaiting(` ${'OK'.green}`);
+		let ok = true;
+		const cwd = `${process.env.GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway/gengateway`;
+		if (fs.existsSync(`${cwd}/generator.go`)) {
+			const gggVersion = tools.process.execSync('git log -1 --format=%ct generator.go', { cwd, stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+			// Magic version that fixes the base path of generated file
+			if (gggVersion < '1510172941') {
+				stopWaiting(` ${'WARN'.yellow}, ${'protoc-gen-grpc-gateway'.cyan} is out of date, please consider an update.`);
+				ok = false;
+			}
+		}
+		if (ok) stopWaiting(` ${'OK'.green}`);
 	} catch (err) {
 		stopWaiting(` ${'NG'.red}, please install protoc-gen-grpc-gateway with ${'go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway'.yellow}`);
 	}
-
 	// @check protoc-gen-govalidators
 	stopWaiting = tools.log.waiter('Checking protoc-gen-govalidators... ');
 	try {
