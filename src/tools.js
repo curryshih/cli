@@ -4,6 +4,9 @@ const fs = require('fs');
 const yaml = require('node-yaml');
 const mkdirp = require('mkdirp');
 const os = require('os');
+const _ = require('underscore');
+
+const templReg = /^<%(.*)%([ifbIFB]?)>$/;
 
 const {
 	spawn, spawnSync, exec, execSync,
@@ -168,6 +171,18 @@ module.exports = {
 				return gens[num].next().value;
 			};
 		},
+	},
+	template(str, obj) {
+		const regRes = str.match(templReg);
+		if (regRes) {
+			const liter = _.template(`<%${regRes[1]}%>`)(obj);
+			const c = regRes[2];
+			if (c === 'i' || c === 'I') return parseInt(liter, 10);
+			if (c === 'f' || c === 'F') return parseFloat(liter);
+			if (c === 'b' || c === 'B') return !!liter;
+			return liter;
+		}
+		throw new Error(`Can not parse ${str}`);
 	},
 };
 

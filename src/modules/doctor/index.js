@@ -1,6 +1,6 @@
 require('colors');
 const rp = require('request-promise-native');
-const version = require('../../version');
+const version = require('../../../version');
 const fs = require('fs');
 
 module.exports = async (argv, tools) => {
