@@ -89,3 +89,18 @@ This is done by using the `navigate` command, which is aliased to `nav`.
 ```shell
 gok nav to projectname
 ```
+
+The command above only prints out the path to the `projectname`. If you want a command to change to that folder, you need to source `gok nav setup` into your `bashrc` file. Depend on your terminal, it can be one of these: `~/.bashrc`, `~/.bash_profile`, `~/.profile`...
+For example:
+
+```shell
+gok nav setup >> ~/.profile
+source ~/.profile
+```
+
+Now you can use
+```shell
+gokto projectname
+gokto servicename
+```
+It is smart enough to grep a part of `projectname` or `servicename`, as well as detect if you are in a project or not. Give it a try.
