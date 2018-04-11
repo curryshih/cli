@@ -4,15 +4,9 @@ createdAt: '0'
 metadata:
   service:
     env: [local, dev, stg, prod]
-  gcloud:
-    namespace:
-      dev: dev
-      stg: dev
-      prod: prod
-    cluster: {}
   tasks:
     run:
-      var:
+      vars:
         port:
           http: <%=tools.next(3001)%>
           rpc: <%=tools.next(13001)%>
@@ -22,8 +16,8 @@ metadata:
           build: true
           cmd: ./.build/<%=service.name%>
           args:
-            - -http=localhost:<%=var.port.http%>
-            - -rpc=localhost:<%=var.port.rpc%>
+            - -http=localhost:<%=vars.port.http%>
+            - -rpc=localhost:<%=vars.port.rpc%>
           option:
             env:
               LOG_SEVERITY_LEVEL: info

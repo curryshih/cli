@@ -13,7 +13,7 @@ const {
 } = require('child_process');
 const execPromise = util.promisify(require('child_process').exec);
 
-module.exports = {
+const tools = {
 	process: {
 		spawn, spawnSync, exec, execSync, execPromise,
 	},
@@ -22,9 +22,10 @@ module.exports = {
 			console.log(...args);
 		},
 		waiter(msg = 'Loading...', dot = '.') {
-			process.stdout.write(msg);
+			const stream = process.stdout;
+			stream.write(msg);
 			const lid = setInterval(() => {
-				process.stdout.write(dot);
+				stream.write(dot);
 			}, 1000);
 			return (...msgs) => {
 				clearInterval(lid);
@@ -157,22 +158,16 @@ module.exports = {
 			setTimeout(() => resolve(), msec * 1000);
 		});
 	},
-	generator: {
-		init() {
-			const gens = {};
-			const succ = function* succ(start) {
-				let idx = start;
-				while (idx < Infinity) {
-					yield idx += 1;
-				}
-			};
-			return (num) => {
-				if (!gens[num]) gens[num] = succ(num);
-				return gens[num].next().value;
-			};
-		},
+	generator(num) {
+		const succ = function* succ(start) {
+			let idx = start;
+			while (idx < Infinity) {
+				yield idx += 1;
+			}
+		};
+		return succ(num);
 	},
-	template(str, obj) {
+	template(str = '', obj) {
 		const regRes = str.match(templReg);
 		if (regRes) {
 			const liter = _.template(`<%${regRes[1]}%>`)(obj);
@@ -182,7 +177,23 @@ module.exports = {
 			if (c === 'b' || c === 'B') return !!liter;
 			return liter;
 		}
-		throw new Error(`Can not parse ${str}`);
+		return _.template(str)(obj);
+	},
+	deepTemplate(templ, obj) {
+		if (_.isString(templ)) return tools.template(templ, obj);
+		if (_.isObject(templ)) {
+			const newTempl = {};
+			const keys = Object.keys(templ);
+			for (let i = 0; i < keys.length; i += 1) {
+				newTempl[keys[i]] = tools.deepTemplate(templ[keys[i]], obj);
+			}
+			return newTempl;
+		}
+		return templ;
+	},
+	inspect(obj) {
+		return util.inspect(obj, false, null);
 	},
 };
 
+module.exports = tools;

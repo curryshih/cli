@@ -1,118 +1,96 @@
 const ojp = require('object-path');
-const deepExtend = require('deep-extend');
-const util = require('util');
+const _ = require('underscore');
+const os = require('os');
+const dep = require('./lib/dep');
+const tplTools = require('./lib/tpltools');
+const wait = require('./lib/wait');
+const logx = require('./lib/logx');
+const tools = require('../../tools');
+const repl = require('repl');
 
-const Services = {};
+const tplServices = {};
+let Services;
+const replOpts = {
+	ignoreUndefined: true,
+	replMode: repl.REPL_MODE_MAGIC,
+	prompt: '> ',
+};
 
-function buildDependency(rootManifest, services, startName) {
-	const depHash = {};
-	const chkList = [startName];
-	while (chkList.length > 0) {
-		const svcName = chkList.shift();
-		// If already checked
-		if (depHash[svcName]) continue;
-
-		const rootMeta = { metadata: rootManifest.metadata };
-
-		const svc = services[svcName];
-		if (!svc) throw Error(`Missing service ${svcName}`);
-
-		const mergedManifest = deepExtend(rootMeta, svc.manifest);
-		Services[svcName] = {
-			svcDir: svc.svcDir,
-			manifest: mergedManifest,
-		};
-		const depSvcs = ojp.get(mergedManifest, 'metadata.tasks.run.deps') || [];
-		depHash[svcName] = {};
-		depSvcs.forEach((s) => {
-			depHash[svcName][s] = true;
-			// Ignore if checked
-			if (depHash[s]) return;
-			chkList.push(s);
-		});
+async function restartProcess(name) {
+	const { run, build } = Services[name].process || {};
+	if (!run) throw new Error(`Run Schema for service ${name} does not exit!`);
+	const { proc } = run;
+	if (proc) {
+		console.log(`[RUNTIME]: Killing running ${name.green}...`.cyan);
+		proc.kill();
+		await wait(1);
 	}
-	const deps = [];
-	let keys = Object.keys(depHash);
-	while (keys.length > 0) {
-		const nodep = keys.filter(s => Object.keys(depHash[s]).length === 0);
-		if (nodep.length === 0) throw new Error('Circular depenency detected, please decouple it ');
-		deps.push(nodep);
-		for (let i = 0; i < nodep.length; i += 1) {
-			for (let j = 0; j < keys.length; j += 1) {
-				delete depHash[keys[j]][nodep[i]];
-			}
-			delete depHash[nodep[i]];
-		}
-		keys = Object.keys(depHash);
-	}
-	return deps;
+
+	const shell = true;
+
+	console.log(`[RUNTIME]: ${name.green}: building...`.cyan);
+	console.log(`  [RUNTIME] ${name.green}: Running: ${build.cmd}`.cyan);
+	const bres = tools.process.spawnSync(build.cmd, [], { cwd: build.cwd, shell });
+	if (!_.isEmpty(bres.stderr)) throw new Error(`${name} Error: ${build.cmd}: ${bres.stderr}`);
+
+	const { cmd, args, options } = run;
+	console.log(`[RUNTIME]: ${name.green}: Spawning child process`.cyan);
+	const xoptions = Object.assign({ cwd: build.cwd, shell }, options || {});
+	const childprocess = tools.process.spawn(cmd, args, xoptions);
+
+	childprocess.stdout.on('data', data => logx(`>>> LOG: ${name}:`.cyan, data));
+	childprocess.stderr.on('data', data => logx(`>>> ERROR: ${name}:`.red, data));
+	childprocess.on('exit', code => console.log(`>>> STERM: ${name}: Process exit: CODE: ${(code || 'Unknown').toString()}`.red));
+	childprocess.on('error', err => console.log(`>>> SYSERR: ${err}`.red));
+	Services[name].process.run.proc = childprocess;
+	return wait(0.3);
 }
 
-/* eslint-disable */
-async function startProcess(name, prelog = "") {
-  const { svcDir, manifest } = Services[name];
-  if (_.isEmpty(schemas)) throw new Error(`Runnability schema for service ${name} does not exist!`);
-  let runSchema;
-  const schemaKeys = Object.keys(schemas)
-  let selAnswer = schemaKeys[0];
-  const asked = (argv.a || "").split(",").indexOf(name) >= 0;
-  if (schemaKeys.length > 1) {
-    if (!asked && !argv.s && schemas.default) {
-      selAnswer = 'default';
-    } else if (!asked && argv.s && schemas[argv.s]) {
-      selAnswer = argv.s;
-    } else {
-      const answers = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'schema',
-          message: `Select schema for service ${name.yellow}:`,
-          choices: Object.keys(schemas)
-        }
-      ]);
-      selAnswer = answers.schema;
-    }
-  }
-  runSchema = schemas[selAnswer];
-  if (!runSchema) throw new Error(`${prelog}${name.green}: schema ${selAnswer} does not exist`);
-  console.log(`${prelog}${name.green}: starting schema ${selAnswer.yellow}...`.cyan);
-  const cwd = path.dirname(path.resolve(fname));
-  const shell = true;
+async function startProcess(name, argv, prelog = '') {
+	const { svcDir, manifest } = Services[name];
+	const runSchema = ojp.get(manifest, 'metadata.tasks.run.schema.default');
+	if (!runSchema) throw new Error(`${prelog}${name.green}: schema default does not exist`);
+	const cwd = svcDir;
+	const build = { cmd: runSchema.build || true, cwd };
+	if (runSchema.build === true) {
+		build.cmd = `gok build service ${name}`;
+	}
+	console.log(`  ${prelog}${name.green}: Creating process wrapper`.cyan);
+	const { flags, service } = tplServices[name];
+	let { vars } = tplServices[name];
+	const tplObj = {
+		argv,
+		service,
+		os,
+		flag: flags,
+		vars,
+		refs: tplServices,
+		tools: tplTools,
+	};
+	// Template vars
+	vars = tools.deepTemplate(vars, tplObj);
+	console.log(`  ${prelog}${name.green}: Proceed with vars: ${tools.inspect(vars).cyan}`);
+	tplServices[name].vars = vars;
+	tplObj.vars = vars;
 
-  const { run } = runSchema;
-  const build = { cmds: runSchema.build || [], cwd }
-  console.log(`  ${prelog}${name.green}: Creating process wrapper for service ${name.yellow} in ${path.dirname(fname).yellow}`.cyan);
+	let cmd = runSchema.cmd || `./build/${name}`;
+	cmd = tools.template(cmd, tplObj);
+	// templating args
+	let args = runSchema.args || [];
+	args = args.map(ag => tools.template(ag, tplObj));
 
-  // Template vars
-  _.each(vars, (val, key) => {
-    vars[key] = _.template(val)({argv, service, Services, os})
-    console.log(`    ${prelog}${name.green}: - With vars ${key.yellow} is ${vars[key].bgWhite.black}`.grey);
-  });
-
-  // templating cmd
-  const tplOj = {argv, service, vars, Services};
-  let cmd = run.cmd || "";
-  cmd = _.template(cmd)(tplOj);
-
-  // templating args
-  let args = run.args || [];
-  args = args.map((ag) => _.template(ag)(tplOj))
-
-  const options = run.options || {};
-  options.cwd = cwd;
-
-  // Env
-  let oEnv = _.extend({}, process.env); //Copy from parent
-  oEnv = _.extend(oEnv, options.env || {});
-  options.env = oEnv;
-  Services[name].run = { schema: { cmd, args, options } };
-  Services[name].build = build;
-  await restartProcess(name);
+	const options = runSchema.options || {};
+	options.cwd = cwd;
+	// Env
+	options.env = { ...process.env, ...options.env }; // Copy from parent
+	Services[name].process = {
+		build,
+		run: { cmd, args, options },
+	};
+	await restartProcess(name);
 }
 
-/* eslint-enable */
-
-module.exports = async (argv, tools) => {
+module.exports = async (argv) => {
 	let svcName = argv._[1];
 	if (!svcName) {
 		const { manifest } = tools.getServiceManifest();
@@ -124,8 +102,8 @@ module.exports = async (argv, tools) => {
 	tools.log.ln('NOTE: Run is still in beta test!'.yellow);
 
 	const { rootDir, meta } = await tools.getRootMeta();
-	const services = await tools.findServices(rootDir);
-	const foundServices = Object.keys(services).filter(s => s.indexOf(svcName) >= 0);
+	const svcs = await tools.findServices(rootDir);
+	const foundServices = Object.keys(svcs).filter(s => s.indexOf(svcName) >= 0);
 	if (foundServices.length === 0) {
 		throw new Error(`Can not find a service with named ${svcName}`);
 	}
@@ -133,7 +111,41 @@ module.exports = async (argv, tools) => {
 		throw new Error(`Found at least two services: ${foundServices[0]}, ${foundServices[1]}...`);
 	}
 	// const { svcDir, manifest } = services[foundServices[0]];
-	const deps = buildDependency(meta, services, foundServices[0]);
-	console.log(deps);
-	console.log(util.inspect(Services, false, null));
+	const { deps, services } = dep.build(meta, svcs, foundServices[0]);
+	Services = services;
+	_(services).each((val, key) => {
+		tplServices[key] = {
+			service: ojp.get(val, 'manifest.service'),
+			vars: ojp.get(val, 'manifest.metadata.tasks.run.vars'),
+			flags: ojp.get(val, 'manifest.metadata.flags'),
+		};
+	});
+	let prelog = '';
+	const pmsf = sname => startProcess(sname, argv, prelog);
+	for (let i = 0; i < deps.length; i += 1) {
+		prelog = `${prelog}  `;
+		const processes = _(deps[i]).map(pmsf);
+		await Promise.all(processes);
+	}
+
+	const rs = repl.start(replOpts);
+	_.each(Services, (serv, name) => {
+		if (!serv.run) return;
+		rs.defineCommand(`kill_${name}`, {
+			help: `Killing service ${name}`,
+			action() {
+				if (!serv.run) return;
+				if (serv.run.proc) {
+					serv.run.proc.kill();
+				}
+				this.displayPrompt();
+			},
+		});
+		rs.defineCommand(`restart_${name}`, {
+			help: `Restart service ${name}`,
+			action() {
+				restartProcess(name);
+			},
+		});
+	});
 };

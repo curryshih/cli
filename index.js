@@ -3,5 +3,10 @@
 const start = require('./src');
 
 start().catch((err) => {
-	console.log(err.toString().red);
+	if (process.env.GOK_VERBOSE) {
+		console.error(err);
+		process.exit(1);
+		return;
+	}
+	console.error(err.toString().red);
 });
