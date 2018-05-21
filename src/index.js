@@ -9,11 +9,13 @@ const build = require('./modules/build');
 const flag = require('./modules/flag');
 const navigate = require('./modules/nav');
 const run = require('./modules/run');
+const task = require('./modules/task');
 
 const argv = minimist(process.argv.slice(2));
 const modules = {
 	doctor, version, help, generate, build, flag, navigate, run,
 };
+modules.do = task;
 
 // Alias first and second params of argv._
 if (argv._[0] && alias.first[argv._[0]]) argv._[0] = alias.first[argv._[0]];

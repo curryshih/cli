@@ -23,4 +23,10 @@ metadata:
               LOG_SEVERITY_LEVEL: info
     k8s:
       clones: []
+    build:
+      cmd: go build
+      args:
+       - -i
+       - -o ".build/<%=service.name%>"
+       - main.go
     deploy:
