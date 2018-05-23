@@ -6,7 +6,8 @@ module.exports = async (argv, tools) => {
 	}
 
 	const { rootDir, meta } = await tools.getRootMeta();
-	const manifests = await tools.findServices(rootDir);
+	const confDirs = tools.getConfigDirs(rootDir, meta);
+	const manifests = await tools.findServices(rootDir, confDirs);
 	let build = [];
 
 	// If svcName exist, find the root and find the service
@@ -20,11 +21,11 @@ module.exports = async (argv, tools) => {
 	//  * If inside a service, build that service
 	//  * Otherwise if inside a root, build all service
 		const b = tools.getServiceManifest();
-		if (b) {
+		if (!b || Object.keys(b).length === 0) {
+			build = Object.values(manifests);
+		} else {
 			log.ln(`Detect current service: ${b.manifest.service.name.green}`);
 			build.push(b);
-		} else {
-			build = Object.values(manifests);
 		}
 	}
 

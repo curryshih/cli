@@ -34,7 +34,7 @@ module.exports = async (argv, tools) => {
 	const validator = !!argv.v;
 
 	if (argv._[2]) {
-		const filename = `proto/gateway/${argv._[2]}.proto`;
+		const filename = `${tools.dirSlash(confDirs.gateway)}${argv._[2]}.proto`;
 		const pfile = `${rootDir}/${filename}`;
 		if (!fs.existsSync(pfile)) {
 			throw new Error('Bad proto name');
@@ -54,13 +54,13 @@ module.exports = async (argv, tools) => {
 	}
 
 	// get all proto file
-	const protoDir = `${rootDir}/proto/gateway`;
+	const protoDir = `${rootDir}${tools.slashDir(confDirs.gateway)}`;
 	if (!fs.existsSync(protoDir)) {
 		throw new Error('No gateway proto dir');
 	}
 	const files = fs.readdirSync(protoDir);
 	for (let i = 0; i < files.length; i += 1) {
-		const filename = `proto/gateway/${files[i]}`;
+		const filename = `${tools.dirSlash(confDirs.gateway)}${files[i]}`;
 		const pfile = `${rootDir}/${filename}`;
 		const lst = fs.lstatSync(pfile);
 

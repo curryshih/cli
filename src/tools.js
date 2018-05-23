@@ -106,6 +106,10 @@ const tools = {
 		if (dir === '.') return '';
 		return `/${dir}`;
 	},
+	dirSlash(dir) {
+		if (dir === '.') return '';
+		return `${dir}/`;
+	},
 	getServiceManifest() {
 		const goPath = process.env.GOPATH;
 		if (!goPath) {
@@ -167,8 +171,9 @@ const tools = {
 		}));
 		return mans;
 	},
-	async findServices(rootDir) {
-		const { stdout } = await execPromise(`find ${rootDir}/src/service -type f -name manifest.yaml`);
+	async findServices(rootDir, confDirs) {
+		const svcRoot = `${rootDir}${tools.slashDir(confDirs.service)}`;
+		const { stdout } = await execPromise(`find ${svcRoot} -type f -name manifest.yaml`);
 		const files = stdout.split('\n').filter(f => !!f.trim());
 		if (!files) {
 			return [];
