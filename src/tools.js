@@ -2,6 +2,7 @@ const util = require('util');
 const path = require('path');
 const fs = require('fs');
 const yaml = require('node-yaml');
+const ojp = require('object-path');
 const mkdirp = require('mkdirp');
 const os = require('os');
 const _ = require('underscore');
@@ -65,6 +66,45 @@ const tools = {
 			rPath = `../${rPath}`;
 		}
 		return {};
+	},
+	getConfigDirs(rootDir, meta) {
+		const dirs = ojp.get(meta, 'config.dirs') || {};
+		let {
+			proto, gateway, service, genproto, gengateway,
+		} = dirs;
+		let edited = false;
+		if (!proto || !gateway || !service || !genproto || !gengateway) {
+			edited = true;
+			if (!proto) {
+				proto = 'proto';
+				dirs.proto = proto;
+			}
+			if (!gateway) {
+				gateway = 'proto/gateway';
+				dirs.gateway = gateway;
+			}
+			if (!service) {
+				service = 'src/service';
+				dirs.service = service;
+			}
+			if (!genproto) {
+				genproto = 'src/proto';
+				dirs.genproto = genproto;
+			}
+			if (!gengateway) {
+				gengateway = 'src/proto/gateway';
+				dirs.gengateway = gengateway;
+			}
+		}
+		if (edited) {
+			ojp.set(meta, 'config.dirs', dirs);
+			yaml.writeSync(`${rootDir}/root.yaml`, meta);
+		}
+		return dirs;
+	},
+	slashDir(dir) {
+		if (dir === '.') return '';
+		return `/${dir}`;
 	},
 	getServiceManifest() {
 		const goPath = process.env.GOPATH;

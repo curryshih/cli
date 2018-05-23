@@ -10,6 +10,7 @@ module.exports = async (argv, tools) => {
 		throw new Error('Bad proto name');
 	}
 	const { rootDir, meta } = await tools.getRootMeta();
+	const confDirs = tools.getConfigDirs(rootDir, meta);
 	const paths = ojp.get(meta, 'config.proto.paths');
 	const mappings = ojp.get(meta, 'config.proto.mappings');
 	const plugins = ojp.get(meta, 'config.proto.plugins');
@@ -39,6 +40,7 @@ module.exports = async (argv, tools) => {
 			throw new Error('Bad proto name');
 		}
 		await singleGenerate({
+			confDirs,
 			filename,
 			rootDir,
 			outDir,
@@ -64,6 +66,7 @@ module.exports = async (argv, tools) => {
 
 		if (lst.isFile() && pfile.endsWith('.proto')) {
 			await singleGenerate({
+				confDirs,
 				filename,
 				rootDir,
 				gateway,

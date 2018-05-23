@@ -24,7 +24,8 @@ module.exports = async (argv, tools) => {
 	const waiterEnd = tools.log.waiter('Start munching...');
 	try {
 		const { rootDir, meta } = await tools.getRootMeta();
-		const serviceRoot = `${rootDir}/src/service`;
+		const confDirs = tools.getConfigDirs(rootDir, meta);
+		const serviceRoot = `${rootDir}/${confDirs.service}`;
 		let servicePath = serviceName;
 		if (packagePath) {
 			servicePath = `${packagePath}/${serviceName}`;
@@ -62,7 +63,7 @@ module.exports = async (argv, tools) => {
 		tools.writeFilePath(`${serviceAbsPath}/Dockerfile`, dockerfile);
 
 		// Main file
-		const mainfile = maintpl(meta, manifest);
+		const mainfile = maintpl(tools, meta, manifest, confDirs);
 		tools.writeFilePath(`${serviceAbsPath}/main.go`, mainfile);
 
 		// Create folders

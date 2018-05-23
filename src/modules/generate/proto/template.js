@@ -1,12 +1,12 @@
 const pascalize = require('pascal-case');
 
-module.exports = (data, meta) => {
+module.exports = (tools, data, meta, confDirs) => {
 	const sname = pascalize(data.name);
 	const lowname = sname.toLowerCase();
 	return `syntax = "proto3";
 
 package ${lowname};
-option go_package = "${meta.package}/src/proto/${data.package ? data.package : ''}${data.package ? '/' : ''}${lowname};${lowname}pb";
+option go_package = "${meta.package}${tools.slashDir(confDirs.genproto)}/${data.package ? data.package : ''}${data.package ? '/' : ''}${lowname};${lowname}pb";
 
 // This is the list of proto provided by protobuf
 // Use the one that you want

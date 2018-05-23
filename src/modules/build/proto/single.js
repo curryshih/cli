@@ -1,13 +1,13 @@
 const config = require('./config');
 
 module.exports = async (data, tools) => {
-	const { gateway, validator } = data;
+	const { gateway, validator, confDirs } = data;
 
 	const paths = config.buildPath(data.paths);
 	const mappings = config.buildMapping(data.mappings);
 	const plugins = config.buildPlugins(data.plugins || []);
 
-	let command = `protoc -Iproto ${paths} ${plugins} --go_out=${mappings},plugins=grpc:${data.outDir}`;
+	let command = `protoc -I${confDirs.proto} ${paths} ${plugins} --go_out=${mappings},plugins=grpc:${data.outDir}`;
 	if (validator) command = `${command} --govalidators_out=${mappings}:${data.outDir}`;
 	let stopWaiting;
 

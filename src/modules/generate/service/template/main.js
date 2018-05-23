@@ -1,4 +1,4 @@
-module.exports = (rtMf, svcMf) => `package main
+module.exports = (tools, rtMf, svcMf, confDirs) => `package main
 
 import (
 	"flag"
@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"${rtMf.package}/src/service/${svcMf.service.path}/args"
+	"${rtMf.package}${tools.slashDir(confDirs.service)}/${svcMf.service.path}/args"
 
 	"google.golang.org/grpc"
 

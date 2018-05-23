@@ -10,6 +10,7 @@ module.exports = async (argv, tools) => {
 		throw new Error('Bad proto name');
 	}
 	const { rootDir, meta } = await tools.getRootMeta();
+	const confDirs = tools.getConfigDirs(rootDir, meta);
 	const paths = ojp.get(meta, 'config.proto.paths');
 	const mappings = ojp.get(meta, 'config.proto.mappings');
 	const plugins = ojp.get(meta, 'config.proto.plugins');
@@ -31,12 +32,13 @@ module.exports = async (argv, tools) => {
 	const validator = !!argv.v;
 
 	if (argv._[2]) {
-		const filename = `proto/${argv._[2]}.proto`;
+		const filename = `${confDirs.proto}/${argv._[2]}.proto`;
 		const pfile = `${rootDir}/${filename}`;
 		if (!fs.existsSync(pfile)) {
 			throw new Error('Bad proto name');
 		}
 		await singleGenerate({
+			confDirs,
 			filename,
 			rootDir,
 			outDir,
@@ -49,17 +51,18 @@ module.exports = async (argv, tools) => {
 	}
 
 	// get all proto file
-	const protoDir = `${rootDir}/proto`;
+	const protoDir = `${rootDir}/${confDirs.proto}`;
 	if (!fs.existsSync(protoDir)) {
 		throw new Error('No proto dir');
 	}
 	const files = fs.readdirSync(protoDir);
 	for (let i = 0; i < files.length; i += 1) {
-		const filename = `proto/${files[i]}`;
+		const filename = `${confDirs.proto}/${files[i]}`;
 		const pfile = `${rootDir}/${filename}`;
 		const lst = fs.lstatSync(pfile);
 		if (lst.isFile() && pfile.endsWith('.proto')) {
 			await singleGenerate({
+				confDirs,
 				filename,
 				rootDir,
 				outDir,

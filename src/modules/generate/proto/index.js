@@ -26,13 +26,14 @@ module.exports = async (argv, tools) => {
 	}
 
 	const { rootDir, meta } = await tools.getRootMeta();
-	const pfile = `${rootDir}/proto/${fileName}.proto`;
+	const confDirs = tools.getConfigDirs(rootDir, meta);
+	const pfile = `${rootDir}/${confDirs.proto}/${fileName}.proto`;
 
 	if (fs.existsSync(pfile)) {
-		throw new Error(`Proto named proto/${fileName}.proto exists.`);
+		throw new Error(`Proto named ${confDirs.proto}/${fileName}.proto exists.`);
 	}
 
-	const protoContent = template(data, meta);
+	const protoContent = template(tools, data, meta, confDirs);
 
 	tools.writeFilePath(pfile, protoContent);
 	log.ln(`Generated ${pfile.yellow}`);
