@@ -1,11 +1,22 @@
 require('colors');
 const rp = require('request-promise-native');
+const yaml = require('node-yaml');
+const ojp = require('object-path');
 const version = require('../../../version');
 const fs = require('fs');
 
 module.exports = async (argv, tools) => {
-	// Check cli version
-	let stopWaiting = tools.log.waiter('Checking gokums-cli...');
+	const { log } = tools;
+	let rootDir = null;
+	let meta = null;
+	try {
+		({ rootDir, meta } = await tools.getRootMeta());
+	} catch (e) {
+		// Ignore error
+	}
+
+	// @ Check cli version
+	let stopWaiting = log.waiter('Checking gokums-cli...');
 	try {
 		const resp = await rp('https://raw.githubusercontent.com/gokums/cli/master/version.json');
 		const resj = JSON.parse(resp);
@@ -18,8 +29,8 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check node
-	stopWaiting = tools.log.waiter('Checking Node.js... ');
+	// @ Check node
+	stopWaiting = log.waiter('Checking Node.js... ');
 	try {
 		const nodeVersion = tools.process.execSync('node --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
 		if (nodeVersion < '8.0.0') {
@@ -31,8 +42,8 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check go
-	stopWaiting = tools.log.waiter('Checking Golang... ');
+	// @ Check go
+	stopWaiting = log.waiter('Checking Golang... ');
 	try {
 		const goVersion = tools.process.execSync('go version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
 		if (!goVersion) {
@@ -44,8 +55,8 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check gcloud tool
-	stopWaiting = tools.log.waiter('Checking gcloud... ');
+	// @ Check gcloud tool
+	stopWaiting = log.waiter('Checking gcloud... ');
 	try {
 		const gcloudVersion = tools.process.execSync('gcloud version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
 		if (!gcloudVersion) {
@@ -57,8 +68,8 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check kubectl tool
-	stopWaiting = tools.log.waiter('Checking kubectl... ');
+	// @ Check kubectl tool
+	stopWaiting = log.waiter('Checking kubectl... ');
 	try {
 		const kubectlVersion = tools.process.execSync('kubectl version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
 		if (!kubectlVersion) {
@@ -70,8 +81,8 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check protoc tool
-	stopWaiting = tools.log.waiter('Checking protoc... ');
+	// @ Check protoc tool
+	stopWaiting = log.waiter('Checking protoc... ');
 	try {
 		const protocVersion = tools.process.execSync('protoc --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('libprotoc', '').trim();
 		if (protocVersion < '3.5.0') {
@@ -83,8 +94,8 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check git
-	stopWaiting = tools.log.waiter('Checking git... ');
+	// @ Check git
+	stopWaiting = log.waiter('Checking git... ');
 	try {
 		const gitVersion = tools.process.execSync('git version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
 		if (!gitVersion) {
@@ -96,8 +107,8 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check docker
-	stopWaiting = tools.log.waiter('Checking docker... ');
+	// @ Check docker
+	stopWaiting = log.waiter('Checking docker... ');
 	try {
 		const dockerVersion = tools.process.execSync('docker version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
 		if (!dockerVersion) {
@@ -109,21 +120,32 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check dep
-	stopWaiting = tools.log.waiter(`Checking Golang dependency manager ${'dep'.cyan}... `);
+	// @ Check dep
+	stopWaiting = log.waiter(`Checking Golang dependency manager ${'dep'.cyan}... `);
 	try {
-		const depVersion = tools.process.execSync('dep version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-		if (!depVersion) {
-			stopWaiting(` ${'NG'.red}, please install dep`);
+		if (!rootDir) {
+			const depVersion = tools.process.execSync('dep version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+			if (!depVersion) {
+				stopWaiting(` ${'NG'.red}, please install dep`);
+			} else {
+				stopWaiting(` ${'OK'.yellow} please run again inside a project to check dependency`);
+			}
 		} else {
-			stopWaiting(` ${'OK'.green}`);
+			const depStatus = tools.process.execSync('dep status -json', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+			if (!depStatus) {
+				stopWaiting(` ${'NG'.red}, please install dep`);
+			} else {
+				JSON.parse(depStatus);
+				stopWaiting(` ${'OK'.green}`);
+			}
 		}
 	} catch (err) {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
+		console.log('Please run dep status to solve the problem'.yellow);
 	}
 
-	// Check make
-	stopWaiting = tools.log.waiter('Checking make version... ');
+	// @ Check make
+	stopWaiting = log.waiter('Checking make version... ');
 	try {
 		const makeVersion = tools.process.execSync('make --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
 		if (!makeVersion) {
@@ -135,47 +157,92 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
-	// Check make
-	stopWaiting = tools.log.waiter('Checking GOPATH... ');
+	// @ Check GOPATH
+	stopWaiting = log.waiter('Checking GOPATH... ');
 	if (!process.env.GOPATH) {
 		stopWaiting(` ${'NG'.red}, please set up GOPATH environment varialbe`);
 	} else {
 		stopWaiting(` ${'OK'.green}`);
 	}
 
-	// Check protoc-gen-go
-	stopWaiting = tools.log.waiter('Checking protoc-gen-go... ');
+	// @ Check protoc-gen-go
+	stopWaiting = log.waiter('Checking protoc-gen-go... ');
 	try {
 		tools.process.execSync('which protoc-gen-go', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-		stopWaiting(` ${'OK'.green}`);
+		log.ln('  WARN: Global protoc-gen-go exists, you may want to remove it to avoid conflict'.yellow);
 	} catch (err) {
-		stopWaiting(` ${'NG'.red}, please install protoc-gen-go`);
+		// Ok fine
+	}
+	try {
+		log.l('  Checking vendor protoc-gen-go... ');
+		const cwd = `${rootDir}/vendor/github.com/golang/protobuf/protoc-gen-go`;
+		if (!rootDir) {
+			log.ln('Need to be inside a project to check'.yellow);
+		} else if (!fs.existsSync(cwd)) {
+			stopWaiting(` ${'NG'.red}, please add github.com/golang/protobuf into your Gopkg.toml constraint`);
+		} else {
+			tools.mkdirp(`${rootDir}/.bin`);
+			log.l('rebuilding protoc-gen-go... ');
+			tools.process.execSync(`go build -i -o "${rootDir}/.bin/protoc-gen-go"`, { cwd, stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+			ojp.set(meta, ['config', 'proto', 'plugins', 'protoc-gen-go'], '.bin/protoc-gen-go');
+			yaml.writeSync(`${rootDir}/root.yaml`, meta);
+			stopWaiting('Ok'.green);
+		}
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}: ${err}`);
 	}
 
-	// check protoc-gen-grpc-gateway
-	stopWaiting = tools.log.waiter('Checking protoc-gen-grpc-gateway... ');
+	// @ Check protoc-gen-grpc-gateway
+	stopWaiting = log.waiter('Checking protoc-gen-grpc-gateway... ');
 	try {
 		tools.process.execSync('which protoc-gen-grpc-gateway', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-		let ok = true;
-		const cwd = `${process.env.GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway/gengateway`;
-		if (fs.existsSync(`${cwd}/generator.go`)) {
-			const gggVersion = tools.process.execSync('git log -1 --format=%ct generator.go', { cwd, stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-			// Magic version that fixes the base path of generated file
-			if (gggVersion < '1510172941') {
-				stopWaiting(` ${'WARN'.yellow}, ${'protoc-gen-grpc-gateway'.cyan} is out of date, please consider an update.`);
-				ok = false;
-			}
-		}
-		if (ok) stopWaiting(` ${'OK'.green}`);
+		log.ln('  WARN: Global protoc-gen-grpc-gateway exists, you may want to remove it to avoid conflict'.yellow);
 	} catch (err) {
-		stopWaiting(` ${'NG'.red}, please install protoc-gen-grpc-gateway with ${'go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway'.yellow}`);
+		// Ok fine
 	}
-	// @check protoc-gen-govalidators
-	stopWaiting = tools.log.waiter('Checking protoc-gen-govalidators... ');
+	try {
+		log.l('  Checking vendor protoc-gen-grpc-gateway... ');
+		const cwd = `${rootDir}/vendor/github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway`;
+		if (!rootDir) {
+			log.ln('Need to be inside a project to check'.yellow);
+		} else if (!fs.existsSync(cwd)) {
+			stopWaiting(` ${'NG'.red}, please add github.com/grpc-ecosystem/grpc-gateway into your Gopkg.toml constraint`);
+		} else {
+			tools.mkdirp(`${rootDir}/.bin`);
+			log.l('rebuilding protoc-gen-grpc-gateway... ');
+			tools.process.execSync(`go build -i -o "${rootDir}/.bin/protoc-gen-grpc-gateway"`, { cwd, stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+			ojp.set(meta, ['config', 'proto', 'plugins', 'protoc-gen-grpc-gateway'], '.bin/protoc-gen-grpc-gateway');
+			yaml.writeSync(`${rootDir}/root.yaml`, meta);
+			stopWaiting('Ok'.green);
+		}
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}: ${err}`);
+	}
+
+	// @ Check protoc-gen-govalidators
+	stopWaiting = log.waiter('Checking protoc-gen-govalidators... ');
 	try {
 		tools.process.execSync('which protoc-gen-govalidators', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-		stopWaiting(` ${'OK'.green}`);
+		log.ln('  WARN: Global protoc-gen-govalidators exists, you may want to remove it to avoid conflict'.yellow);
 	} catch (err) {
-		stopWaiting(` ${'NG'.red}, please install protoc-gen-grpc-govalidators with ${'go get github.com/gokums/go-proto-validators/protoc-gen-govalidators'.yellow}`);
+		// Ok fine
+	}
+	try {
+		log.l('  Checking vendor protoc-gen-govalidators... ');
+		const cwd = `${rootDir}/vendor/github.com/gokums/go-proto-validators/protoc-gen-govalidators`;
+		if (!rootDir) {
+			log.ln('Need to be inside a project to check'.yellow);
+		} else if (!fs.existsSync(cwd)) {
+			stopWaiting(` ${'NG'.red}, please add github.com/grpc-ecosystem/grpc-gateway into your Gopkg.toml constraint`);
+		} else {
+			tools.mkdirp(`${rootDir}/.bin`);
+			log.l('rebuilding protoc-gen-govalidators... ');
+			tools.process.execSync(`go build -i -o "${rootDir}/.bin/protoc-gen-govalidators"`, { cwd, stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+			ojp.set(meta, ['config', 'proto', 'plugins', 'protoc-gen-govalidators'], '.bin/protoc-gen-govalidators');
+			yaml.writeSync(`${rootDir}/root.yaml`, meta);
+			stopWaiting('Ok'.green);
+		}
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}: ${err}`);
 	}
 };

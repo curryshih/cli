@@ -12,6 +12,7 @@ module.exports = async (argv, tools) => {
 	const { rootDir, meta } = await tools.getRootMeta();
 	const paths = ojp.get(meta, 'config.proto.paths');
 	const mappings = ojp.get(meta, 'config.proto.mappings');
+	const plugins = ojp.get(meta, 'config.proto.plugins');
 
 	if (!paths || !mappings) {
 		if (!paths) ojp.set(meta, 'config.proto.paths', config.defaultPath);
@@ -43,6 +44,7 @@ module.exports = async (argv, tools) => {
 			outDir,
 			gateway,
 			validator,
+			plugins,
 			paths: paths || config.defaultPath,
 			mappings: mappings || config.defaultMapping,
 		}, tools);
@@ -67,6 +69,7 @@ module.exports = async (argv, tools) => {
 				gateway,
 				outDir,
 				validator,
+				plugins,
 				paths: paths || config.defaultPath,
 				mappings: mappings || config.defaultMapping,
 			}, tools);

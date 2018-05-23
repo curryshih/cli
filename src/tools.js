@@ -21,6 +21,9 @@ const tools = {
 		ln(...args) {
 			console.log(...args);
 		},
+		l(...args) {
+			process.stdout.write(...args);
+		},
 		waiter(msg = 'Loading...', dot = '.') {
 			const stream = process.stdout;
 			stream.write(msg);

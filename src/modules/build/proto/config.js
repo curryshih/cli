@@ -7,6 +7,10 @@ module.exports = {
 		'vendor/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis',
 		'vendor/github.com/gokums/go-proto-validators',
 	],
+	buildPlugins(plugins) {
+		const ps = Object.keys(plugins).map(mkey => `--plugin=${mkey}=${plugins[mkey]}`);
+		return ps.join(' ');
+	},
 	buildMapping(mappings) {
 		const mstrs = Object.keys(mappings).map(mkey => `M${mkey}=${mappings[mkey]}`);
 		return mstrs.join(',');
