@@ -1,6 +1,26 @@
 project: gokums-sample
 package: github.com/gokums/sample
 createdAt: '0'
+config:
+  proto:
+    paths:
+      - vendor/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis
+    mappings:
+      google/api/annotations.proto: google.golang.org/genproto/googleapis/api/annotations
+    plugins: []
+    genflags:
+      proto:
+        required:
+          - --go_out=<%=mappings%>,plugins=grpc:<%=outDir%>
+        optional:
+          val: --govalidators_out=<%=mappings%>:<%=outDir%>
+      gateway:
+        required:
+          - --go_out=<%=mappings%>,plugins=grpc:<%=outDir%>
+          - --grpc-gateway_out=logtostderr=true:<%=outDir%>
+        optional:
+          val: --govalidators_out=<%=mappings%>:<%=outDir%>
+          swag: --swagger_out=<%=mappings%>:docs/swagger
 metadata:
   service:
     env: [local, dev, stg, prod]

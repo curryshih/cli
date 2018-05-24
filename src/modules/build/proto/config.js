@@ -7,7 +7,25 @@ module.exports = {
 		'vendor/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis',
 		'vendor/github.com/gokums/go-proto-validators',
 	],
-	buildPlugins(plugins) {
+	defaultGenflags: {
+		proto: {
+			required: ['--go_out=<%=mappings%>,plugins=grpc:<%=outDir%>'],
+			optional: {
+				val: '--govalidators_out=<%=mappings%>:<%=outDir%>',
+			},
+		},
+		gateway: {
+			required: [
+				'--go_out=<%=mappings%>,plugins=grpc:<%=outDir%>',
+				'--grpc-gateway_out=logtostderr=true:<%=outDir%>',
+			],
+			optional: {
+				val: '--govalidators_out=<%=mappings%>:<%=outDir%>',
+				swag: '--swagger_out=<%=mappings%>:docs/swagger',
+			},
+		}
+	},
+	buildPlugin(plugins) {
 		return plugins.map(b => `--plugin=${b}`).join(' ');
 	},
 	buildMapping(mappings) {
