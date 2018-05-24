@@ -67,13 +67,26 @@ const tools = {
 		}
 		return {};
 	},
+	getPlugins(rootDir, meta) {
+		const plugins = ojp.get(meta, 'config.proto.plugins');
+		if (!Array.isArray(plugins)) {
+			ojp.set(meta, 'config.proto.plugins', []);
+			yaml.writeSync(`${rootDir}/root.yaml`, meta);
+			return [];
+		}
+		return plugins;
+	},
+	getPluginBins(rootDir, confDirs) {
+		const files = fs.readdirSync(`${rootDir}${tools.slashDir(confDirs.bin)}/proto`);
+		return files.map(f => `${tools.dirSlash(confDirs.bin)}proto/${f}`);
+	},
 	getConfigDirs(rootDir, meta) {
 		const dirs = ojp.get(meta, 'config.dirs') || {};
 		let {
-			proto, gateway, service, genproto, gengateway,
+			proto, gateway, service, genproto, gengateway, bin,
 		} = dirs;
 		let edited = false;
-		if (!proto || !gateway || !service || !genproto || !gengateway) {
+		if (!proto || !gateway || !service || !genproto || !gengateway || !bin) {
 			edited = true;
 			if (!proto) {
 				proto = 'proto';
@@ -94,6 +107,10 @@ const tools = {
 			if (!gengateway) {
 				gengateway = 'src/proto/gateway';
 				dirs.gengateway = gengateway;
+			}
+			if (!bin) {
+				bin = '.bin';
+				dirs.bin = bin;
 			}
 		}
 		if (edited) {

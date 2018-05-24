@@ -8,8 +8,7 @@ module.exports = {
 		'vendor/github.com/gokums/go-proto-validators',
 	],
 	buildPlugins(plugins) {
-		const ps = Object.keys(plugins).map(mkey => `--plugin=${mkey}=${plugins[mkey]}`);
-		return ps.join(' ');
+		return plugins.map(b => `--plugin=${b}`).join(' ');
 	},
 	buildMapping(mappings) {
 		const mstrs = Object.keys(mappings).map(mkey => `M${mkey}=${mappings[mkey]}`);

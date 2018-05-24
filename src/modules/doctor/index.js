@@ -165,84 +165,23 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'OK'.green}`);
 	}
 
-	// @ Check protoc-gen-go
-	stopWaiting = log.waiter('Checking protoc-gen-go... ');
-	try {
-		tools.process.execSync('which protoc-gen-go', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-		log.ln('  WARN: Global protoc-gen-go exists, you may want to remove it to avoid conflict'.yellow);
-	} catch (err) {
-		// Ok fine
+	// @ Check plugins
+	log.ln('Checking plugins...');
+	const plugins = tools.getPlugins(rootDir, meta);
+	let plug = 'github.com/golang/protobuf/protoc-gen-go';
+	if (plugins.indexOf(plug) < 0) {
+		log.ln(`  Please install protoc-gen-go with ${'gok plugin add'.yellow} ${plug.yellow}`.cyan);
 	}
-	try {
-		log.l('  Checking vendor protoc-gen-go... ');
-		const cwd = `${rootDir}/vendor/github.com/golang/protobuf/protoc-gen-go`;
-		if (!rootDir) {
-			log.ln('Need to be inside a project to check'.yellow);
-		} else if (!fs.existsSync(cwd)) {
-			stopWaiting(` ${'NG'.red}, please add github.com/golang/protobuf into your Gopkg.toml constraint`);
-		} else {
-			tools.mkdirp(`${rootDir}/.bin`);
-			log.l('rebuilding protoc-gen-go... ');
-			tools.process.execSync(`go build -i -o "${rootDir}/.bin/protoc-gen-go"`, { cwd, stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-			ojp.set(meta, ['config', 'proto', 'plugins', 'protoc-gen-go'], '.bin/protoc-gen-go');
-			yaml.writeSync(`${rootDir}/root.yaml`, meta);
-			stopWaiting('Ok'.green);
-		}
-	} catch (err) {
-		stopWaiting(` ${'NG'.red}: ${err}`);
+	plug = 'github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway';
+	if (plugins.indexOf(plug) < 0) {
+		log.ln(`  Please install protoc-gen-grpc-gateway with ${'gok plugin add'.yellow} ${plug.yellow}`.cyan);
 	}
-
-	// @ Check protoc-gen-grpc-gateway
-	stopWaiting = log.waiter('Checking protoc-gen-grpc-gateway... ');
-	try {
-		tools.process.execSync('which protoc-gen-grpc-gateway', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-		log.ln('  WARN: Global protoc-gen-grpc-gateway exists, you may want to remove it to avoid conflict'.yellow);
-	} catch (err) {
-		// Ok fine
+	plug = 'github.com/gokums/go-proto-validators/protoc-gen-govalidators';
+	if (plugins.indexOf(plug) < 0) {
+		log.ln(`  You may want to install protoc-gen-govalidators with ${'gok plugin add'.yellow} ${plug.yellow}`);
 	}
-	try {
-		log.l('  Checking vendor protoc-gen-grpc-gateway... ');
-		const cwd = `${rootDir}/vendor/github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway`;
-		if (!rootDir) {
-			log.ln('Need to be inside a project to check'.yellow);
-		} else if (!fs.existsSync(cwd)) {
-			stopWaiting(` ${'NG'.red}, please add github.com/grpc-ecosystem/grpc-gateway into your Gopkg.toml constraint`);
-		} else {
-			tools.mkdirp(`${rootDir}/.bin`);
-			log.l('rebuilding protoc-gen-grpc-gateway... ');
-			tools.process.execSync(`go build -i -o "${rootDir}/.bin/protoc-gen-grpc-gateway"`, { cwd, stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-			ojp.set(meta, ['config', 'proto', 'plugins', 'protoc-gen-grpc-gateway'], '.bin/protoc-gen-grpc-gateway');
-			yaml.writeSync(`${rootDir}/root.yaml`, meta);
-			stopWaiting('Ok'.green);
-		}
-	} catch (err) {
-		stopWaiting(` ${'NG'.red}: ${err}`);
-	}
-
-	// @ Check protoc-gen-govalidators
-	stopWaiting = log.waiter('Checking protoc-gen-govalidators... ');
-	try {
-		tools.process.execSync('which protoc-gen-govalidators', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-		log.ln('  WARN: Global protoc-gen-govalidators exists, you may want to remove it to avoid conflict'.yellow);
-	} catch (err) {
-		// Ok fine
-	}
-	try {
-		log.l('  Checking vendor protoc-gen-govalidators... ');
-		const cwd = `${rootDir}/vendor/github.com/gokums/go-proto-validators/protoc-gen-govalidators`;
-		if (!rootDir) {
-			log.ln('Need to be inside a project to check'.yellow);
-		} else if (!fs.existsSync(cwd)) {
-			stopWaiting(` ${'NG'.red}, please add github.com/grpc-ecosystem/grpc-gateway into your Gopkg.toml constraint`);
-		} else {
-			tools.mkdirp(`${rootDir}/.bin`);
-			log.l('rebuilding protoc-gen-govalidators... ');
-			tools.process.execSync(`go build -i -o "${rootDir}/.bin/protoc-gen-govalidators"`, { cwd, stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
-			ojp.set(meta, ['config', 'proto', 'plugins', 'protoc-gen-govalidators'], '.bin/protoc-gen-govalidators');
-			yaml.writeSync(`${rootDir}/root.yaml`, meta);
-			stopWaiting('Ok'.green);
-		}
-	} catch (err) {
-		stopWaiting(` ${'NG'.red}: ${err}`);
+	plug = 'github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger';
+	if (plugins.indexOf(plug) < 0) {
+		log.ln(`  You may want to install protoc-gen-swagger with ${'gok plugin add'.yellow} ${plug.yellow}`);
 	}
 };

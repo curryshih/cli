@@ -13,7 +13,7 @@ module.exports = async (argv, tools) => {
 	const confDirs = tools.getConfigDirs(rootDir, meta);
 	const paths = ojp.get(meta, 'config.proto.paths');
 	const mappings = ojp.get(meta, 'config.proto.mappings');
-	const plugins = ojp.get(meta, 'config.proto.plugins');
+	const plugins = tools.getPluginBins(rootDir, confDirs);
 
 	if (!paths || !mappings) {
 		if (!paths) ojp.set(meta, 'config.proto.paths', config.defaultPath);

@@ -10,10 +10,11 @@ const flag = require('./modules/flag');
 const navigate = require('./modules/nav');
 const run = require('./modules/run');
 const task = require('./modules/task');
+const plugin = require('./modules/plugin');
 
 const argv = minimist(process.argv.slice(2));
 const modules = {
-	doctor, version, help, generate, build, flag, navigate, run,
+	doctor, version, help, generate, build, flag, navigate, run, plugin,
 };
 modules.do = task;
 
