@@ -1,10 +1,10 @@
 {
   "name": "gokums-cli",
-  "version": "1.1.4",
+  "version": "1.1.6",
   "description": "Client for Gokums Framework",
   "main": "index.js",
   "scripts": {
-    "preinstall": "misc/git/create-pre-commit-file",
+    "precomit": "misc/git/create-pre-commit-file",
     "test": "mocha src/**/*.test.js --reporter spec"
   },
   "keywords": [
