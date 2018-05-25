@@ -166,22 +166,44 @@ module.exports = async (argv, tools) => {
 	}
 
 	// @ Check plugins
-	log.ln('Checking plugins...');
-	const plugins = tools.getPlugins(rootDir, meta);
-	let plug = 'github.com/golang/protobuf/protoc-gen-go';
-	if (plugins.indexOf(plug) < 0) {
-		log.ln(`  Please install protoc-gen-go with ${'gok plugin add'.yellow} ${plug.yellow}`.cyan);
-	}
-	plug = 'github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway';
-	if (plugins.indexOf(plug) < 0) {
-		log.ln(`  Please install protoc-gen-grpc-gateway with ${'gok plugin add'.yellow} ${plug.yellow}`.cyan);
-	}
-	plug = 'github.com/gokums/go-proto-validators/protoc-gen-govalidators';
-	if (plugins.indexOf(plug) < 0) {
-		log.ln(`  You may want to install protoc-gen-govalidators with ${'gok plugin add'.yellow} ${plug.yellow}`);
-	}
-	plug = 'github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger';
-	if (plugins.indexOf(plug) < 0) {
-		log.ln(`  You may want to install protoc-gen-swagger with ${'gok plugin add'.yellow} ${plug.yellow}`);
+	log.l('Checking plugins...');
+	if (rootDir) {
+		const plugins = tools.getPlugins(rootDir, meta);
+		let plug = 'github.com/golang/protobuf/protoc-gen-go';
+		if (plugins.indexOf(plug) < 0) {
+			log.ln(`  Please install protoc-gen-go with ${'gok plugin add'.yellow} ${plug.yellow}`.cyan);
+		}
+		plug = 'github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway';
+		if (plugins.indexOf(plug) < 0) {
+			log.ln(`  Please install protoc-gen-grpc-gateway with ${'gok plugin add'.yellow} ${plug.yellow}`.cyan);
+		}
+		plug = 'github.com/gokums/go-proto-validators/protoc-gen-govalidators';
+		if (plugins.indexOf(plug) < 0) {
+			log.ln(`  You may want to install protoc-gen-govalidators with ${'gok plugin add'.cyan} ${plug.cyan}`);
+		}
+		plug = 'github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger';
+		if (plugins.indexOf(plug) < 0) {
+			log.ln(`  You may want to install protoc-gen-swagger with ${'gok plugin add'.cyan} ${plug.cyan}`);
+		}
+		if (plugins.length > 0) {
+			const confDirs = tools.getConfigDirs(rootDir, meta);
+			const binProto = `${rootDir}${tools.slashDir(confDirs.bin)}/proto`;
+			if (!fs.existsSync(binProto)) {
+				log.l(' NG'.red);
+				log.ln(' No plugins found, please run the following:');
+				plugins.forEach(p => log.ln(`  gok plugin add ${p}`.yellow));
+			} else {
+				plugins.forEach((p) => {
+					const pls = p.split('/');
+					const pname = pls[pls.length - 1];
+					if (!fs.existsSync(`${binProto}/${pname}`)) {
+						log.ln(`Can not find binary of ${pname.yellow}, you may want to add with ${'gok plugin add'.yellow} ${p.yellow}`);
+					}
+				});
+			}
+		}
+		log.ln('  Done'.green);
+	} else {
+		log.ln(' Not in a Gokums project'.yellow);
 	}
 };
