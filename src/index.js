@@ -26,6 +26,15 @@ module.exports = async () => {
 	if (typeof modules[argv._[0]] === 'function') {
 		await modules[argv._[0]](argv, tools);
 	} else {
-		modules.help(argv, tools);
+		// try for addon if has
+		let addon = null;
+		try {
+			addon = require(`gok-addon-${argv._[0]}`); // eslint-disable-line
+		} catch (e) {
+			modules.help(argv, tools);
+		}
+		if (typeof addon === 'function' && addon[Symbol.toStringTag] === 'AsyncFunction') {
+			await addon(argv, tools);
+		}
 	}
 };

@@ -1,9 +1,10 @@
 const to = require('./to');
 const setup = require('./setup');
 const help = require('./help');
+const project = require('./project');
 
 const submodules = {
-	to, help, setup,
+	to, help, setup, project,
 };
 
 module.exports = async (argv, tools) => {
