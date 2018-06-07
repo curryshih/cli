@@ -22,8 +22,9 @@ config:
           val: --govalidators_out=<%=mappings%>:<%=outDir%>
           swag: --swagger_out=<%=mappings%>:docs/swagger
 metadata:
-  service:
-    env: [local, dev, stg, prod]
+  vars:
+    service:
+      env: [local, dev, stg, prod]
   tasks:
     run:
       vars:
