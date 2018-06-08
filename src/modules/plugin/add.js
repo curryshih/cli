@@ -1,4 +1,3 @@
-const yaml = require('node-yaml');
 const ojp = require('object-path');
 const fs = require('fs');
 
@@ -53,7 +52,7 @@ module.exports = async (argv, tools) => {
 		if (newPlug) {
 			plugins.push(plug);
 			ojp.set(meta, 'config.proto.plugins', plugins);
-			yaml.writeSync(`${rootDir}/root.yaml`, meta);
+			tools.writeYaml(`${rootDir}/root.yaml`, meta);
 		}
 	} catch (e) {
 		if (process.env.GOKUMS_VERBOSE) console.log(e.stack);

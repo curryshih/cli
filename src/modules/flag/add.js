@@ -1,5 +1,4 @@
 const flagtpl = require('./template');
-const yaml = require('node-yaml');
 
 const types = ['String', 'Int', 'Int64', 'Bool', 'Float64', 'Duration', 'Uint', 'Uint6'];
 
@@ -24,7 +23,7 @@ module.exports = async (argv, tools) => {
 		manifest.metadata.flags[name] = { type, value, usage };
 
 		// manifest.yaml
-		yaml.writeSync(`${svcDir}/manifest.yaml`, manifest);
+		tools.writeYaml(`${svcDir}/manifest.yaml`, manifest);
 
 		// Flags file
 		tools.mkdirp(`${svcDir}/args`);

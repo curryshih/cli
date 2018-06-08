@@ -1,5 +1,3 @@
-const yaml = require('node-yaml');
-
 module.exports = async (argv, tools) => {
 	const { log } = tools;
 	// Check root package
@@ -40,10 +38,10 @@ module.exports = async (argv, tools) => {
 
 	stopWaiting = tools.log.waiter('Furnishing meta...');
 	try {
-		const metadata = yaml.readSync('./root.yaml');
+		const metadata = tools.readYaml('./root.yaml');
 		metadata.package = rootPackage;
 		metadata.createdAt = new Date();
-		yaml.writeSync(`${rootPath}/root.yaml`, metadata);
+		tools.writeYaml(`${rootPath}/root.yaml`, metadata);
 		stopWaiting('done');
 	} catch (err) {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);

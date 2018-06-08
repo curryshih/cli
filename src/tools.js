@@ -1,7 +1,7 @@
 const util = require('util');
 const path = require('path');
 const fs = require('fs');
-const yaml = require('node-yaml');
+const yaml = require('js-yaml');
 const ojp = require('object-path');
 const mkdirp = require('mkdirp');
 const os = require('os');
@@ -57,7 +57,7 @@ const tools = {
 			if (fs.existsSync(aPath)) {
 				const rootDir = path.dirname(aPath);
 				try {
-					const meta = yaml.readSync(aPath);
+					const meta = tools.readYaml(aPath);
 					return { rootDir, meta };
 				} catch (e) {
 					throw new Error('Malformed root.yaml');
@@ -71,7 +71,7 @@ const tools = {
 		const plugins = ojp.get(meta, 'config.proto.plugins');
 		if (!Array.isArray(plugins)) {
 			ojp.set(meta, 'config.proto.plugins', []);
-			yaml.writeSync(`${rootDir}/root.yaml`, meta);
+			tools.writeYaml(`${rootDir}/root.yaml`, meta);
 			return [];
 		}
 		return plugins;
@@ -115,7 +115,7 @@ const tools = {
 		}
 		if (edited) {
 			ojp.set(meta, 'config.dirs', dirs);
-			yaml.writeSync(`${rootDir}/root.yaml`, meta);
+			tools.writeYaml(`${rootDir}/root.yaml`, meta);
 		}
 		return dirs;
 	},
@@ -143,7 +143,7 @@ const tools = {
 			if (fs.existsSync(aPath)) {
 				const svcDir = path.dirname(aPath);
 				try {
-					const manifest = yaml.readSync(aPath);
+					const manifest = tools.readYaml(aPath);
 					return { svcDir, manifest };
 				} catch (e) {
 					throw new Error('Malformed manifest.yaml');
@@ -179,7 +179,7 @@ const tools = {
 		const mans = {};
 		await Promise.all(files.map(async (fname) => {
 			try {
-				const manifest = yaml.readSync(fname);
+				const manifest = tools.readYaml(fname);
 				const rootDir = path.dirname(fname);
 				mans[manifest.project] = { rootDir, manifest };
 			} catch (e) {
@@ -197,7 +197,7 @@ const tools = {
 		}
 		const mans = {};
 		await Promise.all(files.map(async (fname) => {
-			const manifest = yaml.readSync(fname);
+			const manifest = tools.readYaml(fname);
 			const svcDir = path.dirname(fname);
 			mans[manifest.service.name] = { svcDir, manifest };
 		}));
@@ -255,6 +255,18 @@ const tools = {
 			return newTempl;
 		}
 		return templ;
+	},
+	readYaml(file) {
+		const res = yaml.loadAll(fs.readFileSync(file));
+		if (res.length === 1) return res[0];
+		return res;
+	},
+	writeYaml(file, target) {
+		if (Array.isArray(target)) {
+			fs.writeFileSync(file, target.map(o => yaml.dump(o)).join('---\n'));
+			return;
+		}
+		fs.writeFileSync(file, yaml.dump(target));
 	},
 	inspect(obj) {
 		return util.inspect(obj, false, null);

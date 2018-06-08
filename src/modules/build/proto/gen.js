@@ -1,6 +1,5 @@
 const fs = require('fs');
 const ojp = require('object-path');
-const yaml = require('node-yaml');
 
 const singleGenerate = require('./single');
 const config = require('./config');
@@ -28,7 +27,7 @@ module.exports = async (argv, tools, target) => {
 		ojp.set(meta, PP, paths);
 		ojp.set(meta, PM, mappings);
 		ojp.set(meta, PG, generators);
-		yaml.writeSync(`${rootDir}/root.yaml`, meta);
+		tools.writeYaml(`${rootDir}/root.yaml`, meta);
 	}
 
 	paths = config.buildPath(paths);

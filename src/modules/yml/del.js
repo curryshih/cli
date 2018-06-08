@@ -1,14 +1,13 @@
-const yaml = require('node-yaml');
 const path = require('path');
 const ojp = require('object-path');
 const { parseKey } = require('./key');
 
-module.exports = async (argv) => {
+module.exports = async (argv, tools) => {
 	if (!argv.i || !argv.o) throw new Error('Require io file, ex: gok yaml -i input.yaml -o output.yaml key value');
 	const fname = path.resolve(argv.i);
 	let yml = null;
 	try {
-		yml = yaml.readSync(fname);
+		yml = tools.readYaml(fname);
 	} catch (e) {
 		throw new Error(`${argv.i} does not exist or not a valid yaml file.`);
 	}
@@ -22,5 +21,5 @@ module.exports = async (argv) => {
 		}
 	}
 	const ofname = path.resolve(argv.o);
-	yaml.writeSync(ofname, yml);
+	tools.writeYaml(ofname, yml);
 };

@@ -1,6 +1,5 @@
 require('colors');
 const rp = require('request-promise-native');
-const yaml = require('node-yaml');
 const ojp = require('object-path');
 const version = require('../../../version');
 const fs = require('fs');

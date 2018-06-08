@@ -27,18 +27,27 @@ module.exports = async (argv, tools) => {
 
 	const shell = true;
 	const gitSHA = tools.process.execSync('git rev-parse --short HEAD', { cwd: rootDir, shell });
+	const { GOPATH } = process.env;
+	const rootDirFromGoPath = rootDir.split(GOPATH)[1];
+	const svcDirFromGoPath = svcDir.split(GOPATH)[1];
+	const svcDirFromRoot = svcDir.split(rootDir)[1];
 
 	const theMeta = {
 		project: {
 			package: meta.package,
 			name: meta.project,
 			gitSHA: gitSHA.toString().trim(),
+			dirs: meta.dirs,
 			rootDir,
+			rootDirFromGoPath,
 			svcDir,
+			svcDirFromRoot,
+			svcDirFromGoPath,
 		},
 		vars,
 		service: manifest.service,
 		argv,
+		timestamp: Date.now(),
 		env: process.env,
 	};
 
@@ -56,6 +65,7 @@ module.exports = async (argv, tools) => {
 		console.log(`About to run: ${cmd.cyan}...`);
 
 		const options = {
+			stdio: ['pipe', 'pipe', 'pipe'],
 			cwd: svcDir,
 			shell,
 			env: { ...process.env, ...theTask.env },

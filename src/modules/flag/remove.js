@@ -1,5 +1,4 @@
 const flagtpl = require('./template');
-const yaml = require('node-yaml');
 
 module.exports = async (argv, tools) => {
 	const { log } = tools;
@@ -17,7 +16,7 @@ module.exports = async (argv, tools) => {
 		delete manifest.metadata.flags[name];
 
 		// manifest.yaml
-		yaml.writeSync(`${svcDir}/manifest.yaml`, manifest);
+		tools.writeYaml(`${svcDir}/manifest.yaml`, manifest);
 
 		// Flags file
 		tools.mkdirp(`${svcDir}/args`);

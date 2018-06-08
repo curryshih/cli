@@ -2,8 +2,6 @@ const dockertpl = require('./template/docker');
 const maintpl = require('./template/main');
 const flagtpl = require('./template/flag');
 
-const yaml = require('node-yaml');
-
 module.exports = async (argv, tools) => {
 	const { log } = tools;
 	const serviceName = argv._[2];
@@ -56,7 +54,7 @@ module.exports = async (argv, tools) => {
 		};
 
 		// manifest.yaml
-		yaml.writeSync(`${serviceAbsPath}/manifest.yaml`, manifest);
+		tools.writeYaml(`${serviceAbsPath}/manifest.yaml`, manifest);
 
 		// Dockerfile
 		const dockerfile = dockertpl(manifest);
