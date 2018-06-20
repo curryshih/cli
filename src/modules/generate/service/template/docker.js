@@ -1,4 +1,4 @@
-module.exports = manifest => `FROM alpine:3.4
+module.exports = manifest => `FROM alpine:3.6
 
 RUN apk --no-cache add ca-certificates tzdata && update-ca-certificates
 
