@@ -1,5 +1,7 @@
 # Gok (cli)
 
+[![CircleCI](https://circleci.com/gh/gokums/cli/tree/master.svg?style=svg)](https://circleci.com/gh/gokums/cli/tree/master)
+
 ## Gok Introduction
 
 `Gok` is a command line based tool to allow [Golang](https://golang.org) developers to create a `project`, within which `golang` services and gateways can be written and configured for deployment to Google's Cloud Platform ([GCP](https://cloud.google.com)), specifically [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/).
