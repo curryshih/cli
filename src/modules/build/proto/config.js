@@ -23,7 +23,7 @@ module.exports = {
 				val: '--govalidators_out=<%=mappings%>:<%=outDir%>',
 				swag: '--swagger_out=<%=mappings%>:docs/swagger',
 			},
-		}
+		},
 	},
 	buildPlugin(plugins) {
 		return plugins.map(b => `--plugin=${b}`).join(' ');

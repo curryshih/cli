@@ -1,0 +1,33 @@
+{
+    "build": {
+        "steps": [
+            {
+                "cmd": [
+                    "docker run -i",
+                    "-v <%=project.rootDir%>:/go<%=project.rootDirFromGoPath%>",
+                    "-w /go<%=project.svcDirFromGoPath%>",
+                    "gokums/cli:latest",
+                    "gok task run go-build"
+                ]
+            },
+            {
+                "cmd": [
+                    "docker run",
+                    "--user root",
+                    "-v /var/run/docker.sock:/var/run/docker.sock",
+                    "-v <%=project.rootDir%>:/go<%=project.rootDirFromGoPath%>",
+                    "-w /go<%=project.svcDirFromGoPath%>",
+                    "gokums/cli:latest",
+                    "docker build -t <%=vars.gcloudDocker%>/<%=service.name%>:<%=project.gitSHA%> ."
+                ]
+            }
+        ]
+    },
+    "gcloud-push": {
+        "steps": [
+            {
+                "cmd": "gcloud docker -- push <%=vars.gcloudDocker%>/<%=service.name%>:<%=project.gitSHA%>"
+            }
+        ]
+    }
+}

@@ -47,7 +47,7 @@ metadata:
     build:
       cmd: go build
       args:
-       - -i
-       - -o ".build/<%=service.name%>"
-       - main.go
+        - -i
+        - -o ".build/<%=service.name%>"
+        - main.go
     deploy:

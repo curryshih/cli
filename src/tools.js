@@ -239,7 +239,11 @@ const tools = {
 			const c = regRes[2];
 			if (c === 'i' || c === 'I') return parseInt(liter, 10);
 			if (c === 'f' || c === 'F') return parseFloat(liter);
-			if (c === 'b' || c === 'B') return !!liter;
+			if (c === 'b' || c === 'B') {
+				if (liter === 'true') return true;
+				if (liter === 'false') return false;
+				return !!liter;
+			}
 			return liter;
 		}
 		return _.template(str)(obj);

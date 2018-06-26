@@ -1,0 +1,9 @@
+{
+    "build": {
+        "steps": [
+            {
+                "cmd": "go build -i -o \".build/<%=service.name%>\" main.go"
+            }
+        ]
+    }
+}
