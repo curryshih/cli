@@ -1,4 +1,5 @@
 const ojp = require('object-path');
+const checkStep = require('./lib/checkStep');
 const deepExtend = require('deep-extend');
 
 module.exports = async (argv, tools) => {
@@ -6,9 +7,9 @@ module.exports = async (argv, tools) => {
 		throw new Error('Tasks not found');
 	}
 	const { svcDir, manifest } = tools.getServiceManifest();
-	if (!svcDir || !manifest) {
-		throw new Error('This command must be inside a gokumns service');
-	}
+	// if (!svcDir || !manifest) {
+	// 	throw new Error('This command must be inside a gokumns service');
+	// }
 	const { rootDir, meta } = await tools.getRootMeta();
 	if (!rootDir || !meta) {
 		throw new Error('Invalid gokumns project');
@@ -29,8 +30,8 @@ module.exports = async (argv, tools) => {
 	const gitSHA = tools.process.execSync('git rev-parse --short HEAD', { cwd: rootDir, shell });
 	const { GOPATH } = process.env;
 	const rootDirFromGoPath = rootDir.split(GOPATH)[1];
-	const svcDirFromGoPath = svcDir.split(GOPATH)[1];
-	const svcDirFromRoot = svcDir.split(rootDir)[1];
+	const svcDirFromGoPath = (svcDir || '').split(GOPATH)[1];
+	const svcDirFromRoot = (svcDir || '').split(rootDir)[1];
 
 	const theMeta = {
 		project: {
@@ -45,7 +46,7 @@ module.exports = async (argv, tools) => {
 			svcDirFromGoPath,
 		},
 		vars,
-		service: manifest.service,
+		service: ojp.get(manifest, 'service', {}),
 		argv,
 		timestamp: Date.now(),
 		env: process.env,
@@ -59,17 +60,33 @@ module.exports = async (argv, tools) => {
 
 	for (let i = 0; i < tasks.length; i += 1) {
 		const theTask = mergedTasks[tasks[i]];
-		const theArgs = (theTask.args || []).join(' ');
-		const tplCmd = `${theTask.cmd} ${theArgs}`;
-		const cmd = tools.template(tplCmd, theMeta);
-		console.log(`About to run: ${cmd.cyan}...`);
-
 		const options = {
 			stdio: ['pipe', 'pipe', 'pipe'],
 			cwd: svcDir,
 			shell,
 			env: { ...process.env, ...theTask.env },
 		};
-		await tools.process.execPromise(cmd, options);
+
+		// Backward compatible
+		if (theMeta.args && theTask.cmd) {
+			const theArgs = (theTask.args || []).join(' ');
+			const tplCmd = `${theTask.cmd} ${theArgs}`;
+			const cmd = tools.template(tplCmd, theMeta);
+			console.log(`About to run: ${cmd.cyan}`);
+			await tools.process.execPromise(cmd, options);
+		}
+
+		const { steps } = theTask;
+		if (!steps || steps.length <= 0) continue;
+		for (let j = 0; j < steps.length; j += 1) {
+			const { runable, name, cmd } = await checkStep(steps[j], theMeta);
+			if (runable) {
+				console.log(`About to run: ${(name || cmd).cyan}`);
+				await tools.process.execPromise(cmd, options);
+			} else {
+				console.log(`Ignore: ${(name || cmd).cyan}`);
+			}
+		}
 	}
 };
+

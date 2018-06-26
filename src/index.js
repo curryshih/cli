@@ -15,9 +15,8 @@ const yml = require('./modules/yml');
 
 const argv = minimist(process.argv.slice(2));
 const modules = {
-	doctor, version, help, generate, build, flag, navigate, run, plugin, yml,
+	doctor, version, help, generate, build, flag, navigate, run, plugin, yml, task,
 };
-modules.do = task;
 
 // Alias first and second params of argv._
 if (argv._[0] && alias.first[argv._[0]]) argv._[0] = alias.first[argv._[0]];
