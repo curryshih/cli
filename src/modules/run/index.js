@@ -91,12 +91,16 @@ async function startProcess(name, argv, prelog = '') {
 }
 
 module.exports = async (argv) => {
-	let svcName = argv._[1];
-	if (!svcName) {
+	let runSvcs = [];
+	if (argv._.length < 2) {
 		const { manifest } = tools.getServiceManifest();
-		svcName = ojp.get(manifest, 'service.name');
+		runSvcs = [ojp.get(manifest, 'service.name', [])];
 		if (!svcName) {
 			throw new Error('Please provide svcName');
+		}
+	} else {
+		for (let i = 1; i < argv._.length; i++) {
+			runSvcs.push(argv._[i]);
 		}
 	}
 	tools.log.ln('NOTE: Run is still in beta test!'.yellow);
@@ -111,6 +115,9 @@ module.exports = async (argv) => {
 		throw new Error(`Found at least two services: ${foundServices[0]}, ${foundServices[1]}...`);
 	}
 	// const { svcDir, manifest } = services[foundServices[0]];
+	const { svcGraph, services } = build(rootman, svcs);
+	const startOrders = getStartOrders(svcGraph, );
+
 	const { deps, services } = dep.build(meta, svcs, foundServices[0]);
 	Services = services;
 	_(services).each((val, key) => {
