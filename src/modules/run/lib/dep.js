@@ -1,51 +1,61 @@
 const ojp = require('object-path');
 const deepExtend = require('deep-extend');
+const TGraph = require('tarjan-graph');
 
 module.exports = {
-	build(rootManifest, svcs, startName) {
-		const depHash = {};
+	build(rootManifest, svcs) {
+		const svcGraph = new TGraph();
 		const services = {};
-		const chkList = [startName];
-		while (chkList.length > 0) {
-			const svcName = chkList.shift();
-			// If already checked
-			if (depHash[svcName]) continue;
 
+		Object.keys(svcs).forEach((svcName) => {
 			const rootMeta = { metadata: { ...rootManifest.metadata } };
-
 			const svc = svcs[svcName];
 			if (!svc) throw Error(`Missing service ${svcName}`);
-
 			const mergedManifest = deepExtend(rootMeta, svc.manifest);
 			services[svcName] = {
 				svcDir: svc.svcDir,
 				manifest: mergedManifest,
 			};
-			const depSvcs = ojp.get(mergedManifest, 'metadata.tasks.run.deps') || [];
-			depHash[svcName] = {};
-			depSvcs.forEach((s) => {
-				if (s === svcName) throw new Error(`Service ${svcName} refers self-dependent`);
-				depHash[svcName][s] = true;
-				// Ignore if checked
-				if (depHash[s]) return;
-				if (chkList.indexOf(s) >= 0) return;
-				chkList.push(s);
+			const depSvcNames = ojp.get(mergedManifest, 'metadata.tasks.run.deps') || [];
+			if (depSvcNames.indexOf(svcName) >= 0) throw new Error(`Service ${svcName} refers self-dependent`);
+			svcGraph.add(svcName, depSvcNames);
+		});
+
+		return { svcGraph, services };
+	},
+	getStartOrders(svcGraph, startSvcs) {
+		const cycles = [];
+		if (svcGraph.hasCycle()) {
+			const svcCycles = svcGraph.getCycles();
+			svcCycles.forEach((vtxs) => {
+				cycles.push(vtxs.map(v => v.name));
 			});
 		}
-		const deps = [];
-		let keys = Object.keys(depHash);
-		while (keys.length > 0) {
-			const nodep = keys.filter(s => Object.keys(depHash[s]).length === 0);
-			if (nodep.length === 0) throw new Error('Circular depenency detected, please decouple it ');
-			deps.push(nodep);
-			for (let i = 0; i < nodep.length; i += 1) {
-				for (let j = 0; j < keys.length; j += 1) {
-					delete depHash[keys[j]][nodep[i]];
-				}
-				delete depHash[nodep[i]];
+		const startOrders = {};
+		startSvcs.forEach((svc) => {
+			const cycle = cycles.find(c => c.indexOf(svc) >= 0);
+			startOrders[svc] = { cycle, steps: [] };
+			if (cycle) return;
+
+			const descendants = {};
+			svcGraph.getDescendants(svc).forEach((des) => {
+				descendants[des] = svcGraph.vertices[des].successors.length;
+			});
+			let zeroes = Object.keys(descendants).filter(k => descendants[k] === 0);
+			while (zeroes.length > 0) {
+				startOrders[svc].steps.push(zeroes);
+				zeroes.forEach(z => delete descendants[z]);
+				zeroes.forEach((z) => {
+					Object.keys(descendants).forEach((des) => {
+						if (svcGraph.vertices[des].successors.find(s => s.name === z)) {
+							descendants[des] -= 1;
+						}
+					});
+				});
+				zeroes = Object.keys(descendants).filter(k => descendants[k] === 0);
 			}
-			keys = Object.keys(depHash);
-		}
-		return { deps, services };
+			startOrders[svc].steps.push([svc]);
+		});
+		return startOrders;
 	},
 };
