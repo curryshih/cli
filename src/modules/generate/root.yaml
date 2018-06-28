@@ -27,27 +27,19 @@ metadata:
       env: [local, dev, stg, prod]
   tasks:
     run:
-      vars:
-        port:
-          http: <%=tools.next(3001)%>
-          rpc: <%=tools.next(13001)%>
-          prefix: dev
-      schema:
-        default:
-          build: true
-          cmd: ./.build/<%=service.name%>
-          args:
-            - -http=localhost:<%=vars.port.http%>
-            - -rpc=localhost:<%=vars.port.rpc%>
-          option:
-            env:
-              LOG_SEVERITY_LEVEL: info
-    k8s:
-      clones: []
+      steps:
+        - cmd: go build -i -o \".build/<%=service.name%>\" main.go
+        - cmd:
+          - .build/<%=service.name%>,
+          - -http=localhost:<%=tools.next(3001)%>,
+          - -rpc=localhost:<%=tools.next(13001)%>
+      deps:
+      env:
+        environment: local
+        LOG_SEVERITY_LEVEL: info
     build:
       cmd: go build
       args:
         - -i
         - -o ".build/<%=service.name%>"
         - main.go
-    deploy:
