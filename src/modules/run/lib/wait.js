@@ -1,5 +1,5 @@
-module.exports = async function wait(msec) {
+module.exports = async function wait(sec) {
 	return new Promise((resolve) => {
-		setTimeout(() => resolve(), msec * 1000);
+		setTimeout(() => resolve(), sec * 1000);
 	});
 };

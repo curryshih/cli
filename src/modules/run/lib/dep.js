@@ -6,9 +6,10 @@ module.exports = {
 	build(rootManifest, svcs) {
 		const svcGraph = new TGraph();
 		const services = {};
+		const metadata = { rootManifest };
 
 		Object.keys(svcs).forEach((svcName) => {
-			const rootMeta = { metadata: { ...rootManifest.metadata } };
+			const rootMeta = deepExtend({}, { metadata });
 			const svc = svcs[svcName];
 			if (!svc) throw Error(`Missing service ${svcName}`);
 			const mergedManifest = deepExtend(rootMeta, svc.manifest);
