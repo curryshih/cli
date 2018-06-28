@@ -6,7 +6,7 @@ module.exports = {
 	build(rootManifest, svcs) {
 		const svcGraph = new TGraph();
 		const services = {};
-		const metadata = { rootManifest };
+		const { metadata } = rootManifest;
 
 		Object.keys(svcs).forEach((svcName) => {
 			const rootMeta = deepExtend({}, { metadata });
