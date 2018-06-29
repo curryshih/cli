@@ -5,6 +5,7 @@ module.exports = {
 		r: 'run',
 		f: 'flag',
 		b: 'build',
+		t: 'task',
 		d: 'deploy',
 		pl: 'plugin',
 		nav: 'navigate',

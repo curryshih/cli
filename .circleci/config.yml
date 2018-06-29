@@ -8,10 +8,6 @@ defaults: &defaults
   docker:
     - image: circleci/node:8.9.1
   working_directory: ~/gokums
-general:
-  branches:
-    only:
-      - master # list of branches to build
 jobs:
   test:
     <<: *defaults
@@ -34,6 +30,9 @@ jobs:
           paths: .
   deploy:
     <<: *defaults
+    branches:
+      only:
+        - master # list of branches to build
     steps:
       - attach_workspace:
           at: ~/gokums

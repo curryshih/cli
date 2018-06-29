@@ -1,5 +1,19 @@
 # Usage Guidance
 
+For commands please refer to the guidance of each:
+
+- [Gok doctor](commands/doctor.md).
+- [Gok generate](commands/generate.md).
+- [Gok build](commands/build.md).
+- [Gok flag](commands/flag.md).
+- [Gok navigate](commands/navigate.md).
+- [Gok plugin](commands/plugin.md).
+- [Gok run](commands/run.md).
+- [Gok task](commands/task.md).
+- [Gok yml](commands/yml.md).
+
+Also to type command faster, check the [Command alias](commands/alias.md)
+
 ## Create a new project
 
 The `generate` command will be used to create the basic project, derived from the standard template structure.
