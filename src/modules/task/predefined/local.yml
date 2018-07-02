@@ -1,0 +1,12 @@
+build:
+  steps:
+  - cmd: go build -i -o ".build/<%=service.name%>" main.go
+run:
+  steps:
+  - cmd: go build -i -o ".build/<%=service.name%>" main.go
+  - cmd:
+    - ".build/<%=service.name%>"
+    - "-http-bind=localhost:<%=tools.next('http',3001)%>"
+    - "-rpc-bind=localhost:<%=tools.next('rpc',13001)%>"
+  env:
+    environment: local

@@ -3,7 +3,7 @@ const ojp = require('object-path');
 const { parseKey } = require('./key');
 
 module.exports = async (argv, tools) => {
-	if (!argv.i || !argv.o) throw new Error('Require io file, ex: gok yaml -i input.yaml -o output.yaml key value');
+	if (!argv.i || !argv.o) throw new Error('Require io file, ex: gok yaml w -i input.yaml -o output.yaml key value');
 	const fname = path.resolve(argv.i);
 	console.log(fname);
 	let yml = null;

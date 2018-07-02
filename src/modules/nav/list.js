@@ -1,5 +1,3 @@
-const ojp = require('object-path');
-
 module.exports = async (argv, tools) => {
 	const target = argv._[2] || 'project';
 	if (target === 'project') {
