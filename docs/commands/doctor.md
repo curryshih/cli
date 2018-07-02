@@ -1,6 +1,9 @@
 ## Gok doctor
+Scope: `Global`, `Project`
 
 `Gok doctor` is the command that checks and verifies the current system, to make sure your system is ready, and create less error when `gokking`. Below is the list of checked items.
+
+When invoking inside a project, `Gok doctor` performs checking the `dependencies` of the project with `dep` tool.
 
 ### Gok version
 
