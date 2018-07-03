@@ -67,6 +67,6 @@ module.exports = async (argv, tools) => {
 		stopWaiting('done');
 	} catch (err) {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
-		throw new Error('Can not clean up...');
+		throw new Error('Can not prepare git...');
 	}
 };
