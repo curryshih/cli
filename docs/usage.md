@@ -20,6 +20,7 @@ The scope of the command is defined by the current folder you are in. If your cu
 - [Gok yml](commands/yml.md)
 
 Also to type command faster, check the [Command alias](others/alias.md)
+Check [Gokums conventions](others/conventions.md) for better understanding of the `Gokums`
 
 ## Create a new project
 
