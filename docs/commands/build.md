@@ -1,7 +1,5 @@
 ### Gok build
 
-Scope: `Project`, `Service`
-
 `Gok build` is a tool to compile services and proto. If you did not take a look at [Gokums convention](../others/conventions.md), have a peek yourself.
 
 ### Service
@@ -18,6 +16,8 @@ Build the binary of service with provided `serviceName`, if you don't provide th
 - Perform a `go build main.go` in the root folder of the targeted service, also specify output binary file to `.build/${serviceName}`
 
 ### Proto and Gateway
+
+Scope: `Project`
 
 Th building process of proto and gateway heavily interact with `protoc` and `protoc-gen-*` plugins. For detail configuration, refer to [root.yaml configuration](../others/root.yaml.md)
 

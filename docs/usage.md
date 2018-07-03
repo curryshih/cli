@@ -19,7 +19,7 @@ The scope of the command is defined by the current folder you are in. If your cu
 - [Gok task](commands/task.md)
 - [Gok yml](commands/yml.md)
 
-Also to type command faster, check the [Command alias](commands/alias.md)
+Also to type command faster, check the [Command alias](others/alias.md)
 
 ## Create a new project
 
@@ -28,9 +28,10 @@ The `generate` command will be used to create the basic project, derived from th
 Note, the `generate` command can be abbreviated to `g`. This also assumes GitHub is the repository for code, and therefore the path follows `golang` conventions.
 
 ```shell
-cd $GOPATH/src
-gok g project github.com/orgname/projectname
-cd phoenix-activity-publish
+echo go navigate setup > ~/.bash_rc
+source ~/.bash_rc
+gok g project github.com/gokums/sample
+gokto gokums-sample
 git remote add origin git@github.com:orgname/projectname.git
 git push -u origin master
 ```
