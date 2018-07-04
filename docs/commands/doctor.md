@@ -1,34 +1,41 @@
-## Gok doctor
+# Gok doctor
+
 Scope: `Global`, `Project`
 
-`Gok doctor` is the command that checks and verifies the current system, to make sure your system is ready, and create less error when `gokking`. Below is the list of checked items.
+`Gok doctor` is the command that checks and verifies the current system, to make sure your system is ready, and reduce potential errors when run `Gok`.
+Below is the list of checked items.
 
-When invoking inside a project, `Gok doctor` performs checking the `dependencies` of the project with `dep` tool, and status of protobuf plugins as well.
+When invoked inside a project, `Gok doctor` checks the `dependencies` of the project with `dep` tool, and the status of protobuf plugins as well.
 
-### Gok version
+## Gok version
 
-`Gok` visits the remote version on GitHub and compare with your current version, if it does not match, Gok will inform you to update.
+`Gok` visits the remote version on GitHub and compares with your current version.
+If it does not match, Gok will inform you to update.
 
-### Node version
+## Node version
 
-`Gok` is written with `node 8`. Hence you need the same version to run its tools. `Gok doctor` will check current node version of your system and tell you to use node version more than 8.0
+`Gok` is written with `node 8`. Hence you need the same version to run its tools.
+`Gok doctor` will check current node version of your system and tell you to use node version more than 8.0
 
-### Golang version
+## Golang version
 
-`Gok` is made for `Golang` and uses it as the main language, `Gok doctor` will check if there is any go in your system and will complain if it doesn't have.
+`Gok` is made for `Golang` and uses it as the main language, `Gok doctor` will check if there is any `go` in your system.
 
-### Gcloud and Kubernetes
+## Gcloud and Kubernetes
 
-`Gcloud` and `kubectl` are advised to be installed to take advantage of the advance feature of `Gok`, however, you don't need at the beginning. You only need if you want to deploy to Gcloud.
+`Gcloud` and `kubectl` are advised to be installed to take advantage of the advance feature of `Gok`.
+Hhowever, you don't necessarily need when you start your development.
+You only need if you want to deploy to Gcloud.
 
-### Protoc and its plugins
+## Protoc and its plugins
 
-`Gok` uses `protobuf` as default. Therefore `protoc` is required. If you're already created and are inside a project, `Gok` will check `plugins` those generate code from `proto` file.
+`Gok` uses `protobuf` as default. Therefore `protoc` is required.
+If you're already created and are inside a project, `Gok` will check `plugins` those generate code from `proto` file.
 
-### Git and docker
+## Git and docker
 
-`Git` and `Docker` are essential and necessary for all kinds of action, and are required to run `Gok`.
+`Git` and `Docker` are essential and necessary actions required to run `Gok`.
 
-### Golang Package Dependency management tool
+## Golang Package Dependency management tool
 
-`Dep` is required for `Gok`, please install it.
+`Dep` is required for `Gok`.

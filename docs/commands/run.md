@@ -1,12 +1,17 @@
-## Gok run
+# Gok run
 
-##### Command: gok run [serviceName...]
+## Command: gok run [serviceName...]
 
-`Gok run` provides a great tool to bind and run your services together, it allows you to specify dependency and automatically set up and wired up the dependency to your service.
+`Gok run` provides a tool to bind and run your services together
+It allows you to specify dependencies and automatically set up the dependency to your services.
 
-`Run` command uses the `metadata.tasks.run` to build up and run your service, and it works like this:
+`Run` command uses the `metadata.tasks.run` to build up and run your service
 
-- Build up dependency graph, and check for circular dependency, throw an error and exit if found.
-- It starts with non-dependency services first, running those service and start with other services.
+To do this, the following steps are taken:
 
-`Run` also provides an interactive console to kill or restart a service with ease. After successfully started a service, all dependent services will have `.kill_*` and `.restart_*` attaches to the console.
+- Build up dependency graph, and check for circular dependencies. If found an error is thrown and `run` exits.
+- Starting with non-dependent services first, each is run.
+- Next, services with dependancies are started.
+
+`Run` also provides an interactive console to kill or restart a service.
+After successfully started a service, all dependent services will have `.kill_*` and `.restart_*` commands available in the console.
