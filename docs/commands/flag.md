@@ -3,7 +3,7 @@
 Scope: `Service`
 
 `Gok flag` allows you to manage all parameters to your service from the command line.
-You can `list`, `add`, `remove` and `spawn` flags in your service.
+You can `list`, `add`, `remove` and `rebuild` flags in your service.
 All `flag` commands belong to the service scope, and `Gok` will report an error if you are not in any service scope.
 
 ## List
@@ -53,8 +53,8 @@ If you attempt to re-add a flag, the new one will overwrite the old one.
 
 This command removes the flag's metadata from `metadata.flags` in `manifest.yaml`, then rebuilds the flags in `serviceRoot/args/flag.go`.
 
-## Spawn
+## Rebuild
 
-### Command: gok flag spawn
+### Command: gok flag rebuild
 
-`Spawn` reads all flags from `metadata.flags` in `manifest.yaml` and rebuilds the flags in `serviceRoot/args/flag.go`.
+`rebuild` reads all flags from `metadata.flags` in `manifest.yaml` and rebuilds the flags in `serviceRoot/args/flag.go`.

@@ -29,7 +29,7 @@ Only the first and the second parameter have aliases.
 - `s`: service
 - `gw`: gateway
 - `rm`: remove
-- `sp`: spawn
+- `rb`: rebuild
 
 ## Examples
 

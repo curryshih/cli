@@ -5,7 +5,7 @@ module.exports = async (step, meta) => {
 	const { when, name, cmd } = step;
 	if (!cmd) return { runable: false };
 	let runable = true;
-	if (when) {
+	if (when !== undefined) {
 		if (typeof (when) === 'string') {
 			runable = !!tools.template(when, meta);
 		} else if (typeof when === 'object' && Array.isArray(when)) {

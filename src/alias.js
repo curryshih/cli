@@ -18,6 +18,6 @@ module.exports = {
 		s: 'service',
 		gw: 'gateway',
 		rm: 'remove',
-		sp: 'spawn',
+		rb: 'rebuild',
 	},
 };
