@@ -25,8 +25,11 @@ func main() {
 	// ctx := context.Background()
 	handler := httpx.NewHandler()
 
+	httpLoc := fmt.Sprintf(":%s", *args.HTTPBind)
+	rpcLoc := fmt.Sprintf(":%s", *args.RPCBind)
+
 	go func() {
-		if err := http.ListenAndServe(*args.HTTPBind, handler); err != nil {
+		if err := http.ListenAndServe(httpLoc, handler); err != nil {
 			log.Fatalf("failed to listen and serve http: %v", err)
 		}
 	}()
@@ -36,18 +39,19 @@ func main() {
 	// protobufpb.RegisterServer(srv, rpc.NewRPC())
 	// grpc_prometheus.Register(srv)
 
-	// muxSrv := runtime.NewServeMux(runtime.WithMarshalerOption("*", &gateway.JSONPb{OrigName: true}))
+	// muxSrv := runtime.NewServeMux(runtime.WithMarshalerOption("*", &runtime.JSONPb{OrigName: true}))
 	// opts := []grpc.DialOption{grpc.WithInsecure(), grpc.WithBlock()}
-	// err = gatewaypb.RegisterGwMixerHandlerFromEndpoint(ctx, muxSrv, "localhost"+*args.RPCBind, opts)
+	// err = gatewaypb.RegisterGwMixerHandlerFromEndpoint(ctx, muxSrv, "localhost"+rpcLoc, opts)
 	// if err != nil {
 	// 	log.Fatalf("register endpoint failed: %v", err)
 	// }
 	// handler.Handle("/v1/", muxSrv)
 
-	lis, err := net.Listen("tcp", *args.RPCBind)
+	lis, err := net.Listen("tcp", rpcLoc)
 	if err != nil {
 		log.Fatalf("failed to listen rpc: %v", err)
 	}
+	defer lis.Close()
 
 	go func() {
 		if err := srv.Serve(lis); err != nil {
