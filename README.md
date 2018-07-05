@@ -93,4 +93,4 @@ Checking protoc-gen-govalidators...  OK
 
 ## Usage
 
-Please refer to [usage guide](docs/usage.md).
+Please refer to [usage guide](docs/index.md).
