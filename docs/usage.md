@@ -138,7 +138,7 @@ gok g service servicename1 -p helpers
 gok g service servicename2 -p helpers
 ```
 
-This will create `src\helpers\servicename1` and `src\helpers\servicename2`.
+This will create `src\service\helpers\servicename1` and `src\service\helpers\servicename2`.
 
 ## Other utility tooling
 
