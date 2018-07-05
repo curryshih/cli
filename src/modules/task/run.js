@@ -28,11 +28,13 @@ module.exports = async (argv, tools) => {
 		tasks.push(argv._[i]);
 	}
 
+	const cwd = svcDir || rootDir;
+
 	for (let i = 0; i < tasks.length; i += 1) {
 		const theTask = mergedTasks[tasks[i]];
 		const options = {
 			stdio: ['pipe', 'pipe', 'pipe'],
-			cwd: svcDir,
+			cwd,
 			shell,
 			env: { ...process.env, ...theTask.env },
 		};

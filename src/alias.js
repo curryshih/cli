@@ -19,5 +19,6 @@ module.exports = {
 		gw: 'gateway',
 		rm: 'remove',
 		rb: 'rebuild',
+		rp: 'run-predefined',
 	},
 };

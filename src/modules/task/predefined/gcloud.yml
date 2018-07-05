@@ -1,0 +1,8 @@
+cloud-sql-bootstrap:
+  steps:
+    - name: Install Goose the database migration tool
+      cmd: go get -u github.com/pressly/goose/cmd/goose
+    - name: Install the Cloud SQL Proxy by Google
+      cmd: >-
+        go get
+        github.com/GoogleCloudPlatform/cloudsql-proxy/cmd/cloud_sql_proxy

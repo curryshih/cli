@@ -4,5 +4,7 @@ module.exports = async () => {
 	console.log('  Although, a task can be inherited from root.yaml');
 	console.log(`Usage: gok task ${'pull'.green} ${'namespace'.cyan} name`);
 	console.log('  Pulling a task from predefined list');
+	console.log(`Usage: gok task ${'run-predefined'.green} ${'namespace'.cyan} name`);
+	console.log('  Get and run a task from predefined list');
 	process.exit(0);
 };

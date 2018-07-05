@@ -30,6 +30,8 @@ Only the first and the second parameter have aliases.
 - `gw`: gateway
 - `rm`: remove
 - `rb`: rebuild
+- `rp`: run-predefined,
+
 
 ## Examples
 
