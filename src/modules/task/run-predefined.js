@@ -32,20 +32,11 @@ module.exports = async (argv, tools) => {
 	const cwd = svcDir || rootDir;
 
 	const options = {
-		stdio: ['pipe', 'pipe', 'pipe'],
+		stdio: 'inherit',
 		cwd,
 		shell,
 		env: { ...process.env, ...theTask.env },
 	};
-
-	// Backward compatible
-	if (theTask.args && theTask.cmd) {
-		const theArgs = (theTask.args || []).join(' ');
-		const tplCmd = `${theTask.cmd} ${theArgs}`;
-		const cmd = tools.template(tplCmd, theMeta);
-		console.log(`About to run: ${cmd.cyan}`);
-		await tools.process.execPromise(cmd, options);
-	}
 
 	const { steps } = theTask;
 	if (!steps || steps.length <= 0) throw new Error('The task has no step');
@@ -53,7 +44,7 @@ module.exports = async (argv, tools) => {
 		const { runable, name, cmd } = await checkStep(steps[j], theMeta);
 		if (runable) {
 			console.log(`About to run: ${(name || cmd).cyan}`);
-			await tools.process.execPromise(cmd, options);
+			tools.process.spawnSync(cmd, options);
 		} else {
 			console.log(`Ignore: ${(name || cmd).cyan}`);
 		}

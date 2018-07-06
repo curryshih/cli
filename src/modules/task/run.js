@@ -33,7 +33,7 @@ module.exports = async (argv, tools) => {
 	for (let i = 0; i < tasks.length; i += 1) {
 		const theTask = mergedTasks[tasks[i]];
 		const options = {
-			stdio: ['pipe', 'pipe', 'pipe'],
+			stdio: 'inherit',
 			cwd,
 			shell,
 			env: { ...process.env, ...theTask.env },
@@ -45,7 +45,7 @@ module.exports = async (argv, tools) => {
 			const tplCmd = `${theTask.cmd} ${theArgs}`;
 			const cmd = tools.template(tplCmd, theMeta);
 			console.log(`About to run: ${cmd.cyan}`);
-			await tools.process.execPromise(cmd, options);
+			tools.process.spawnSync(cmd, options);
 		}
 
 		const { steps } = theTask;
@@ -54,7 +54,7 @@ module.exports = async (argv, tools) => {
 			const { runable, name, cmd } = await checkStep(steps[j], theMeta);
 			if (runable) {
 				console.log(`About to run: ${(name || cmd).cyan}`);
-				await tools.process.execPromise(cmd, options);
+				tools.process.spawnSync(cmd, options);
 			} else {
 				console.log(`Ignore: ${(name || cmd).cyan}`);
 			}
