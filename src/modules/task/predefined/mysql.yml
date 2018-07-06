@@ -1,0 +1,22 @@
+bootstrap-5.7:
+  steps:
+  - name: Pulling mysql-server:5.7
+    cmd: docker pull mysql/mysql-server:5.7
+  - name: Running mysql-server:5.7 container
+    cmd: docker run --name=mysqld57 -d mysql/mysql-server:5.7
+password:
+  steps:
+  - name: Pulling mysql server root password
+    cmd: docker logs mysqld57 2>&1 | grep GENERATED
+connect:
+  steps:
+  - name: Connecting to mysql-server:5.7
+    cmd: docker exec -it mysqld57 mysql -uroot -p
+restart:
+  steps:
+  - name: Restarting
+    cmd: docker restart mysqld57
+delete-all:
+  steps:
+  - name: Delete mysql
+    cmd: docker rm mysqld57 -v
