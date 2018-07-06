@@ -3,7 +3,7 @@ bootstrap-5.7:
   - name: Pulling mysql-server:5.7
     cmd: docker pull mysql/mysql-server:5.7
   - name: Running mysql-server:5.7 container
-    cmd: docker run --name=mysqld57 -d mysql/mysql-server:5.7
+    cmd: docker run --name=mysqld57 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_ROOT_HOST='%' -d -p 3306:3306 mysql/mysql-server:5.7
 password:
   steps:
   - name: Pulling mysql server root password
@@ -18,5 +18,7 @@ restart:
     cmd: docker restart mysqld57
 delete-all:
   steps:
+  - name: Stop mysql
+    cmd: docker stop mysqld57
   - name: Delete mysql
     cmd: docker rm mysqld57 -v
