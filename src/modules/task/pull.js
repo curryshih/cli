@@ -24,7 +24,7 @@ module.exports = async (argv, tools) => {
 	const taskKey = `${namespace}-${taskName}`;
 	if (svcDir && manifest) {
 		ojp.set(manifest, `metadata.tasks.${taskKey}`, task);
-		tools.writeYaml(`${svcDir}/manifest.yaml`);
+		tools.writeYaml(`${svcDir}/manifest.yaml`, manifest);
 		console.log(`Populated task ${taskKey.yellow} to ${ojp.get(manifest, 'service.name', svcDir).cyan}`);
 		return;
 	}

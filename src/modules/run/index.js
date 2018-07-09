@@ -22,7 +22,7 @@ async function restartProcess(svcName) {
 	const {
 		runTask, options, theMeta, proc, prelog,
 	} = Services[svcName].process || {};
-	if (!runTask) throw new Error(`Run Schema for service ${svcName} does not exit!`);
+	if (!runTask) throw new Error(`Run task service ${svcName} does not exit!`);
 	if (proc) {
 		console.log(`${prelog}[${svcName.green}]: Killing running ${svcName.green}...`.cyan);
 		proc.kill();
@@ -30,6 +30,8 @@ async function restartProcess(svcName) {
 	}
 
 	const { steps } = runTask;
+	if (!steps || steps.length < 1) throw new Error(`Run steps for service ${svcName} does not exit!`);
+
 	const checkedSteps = [];
 	for (let i = 0; i < steps.length; i += 1) {
 		const { runable, name, cmd } = await checkStep(steps[i], theMeta);
