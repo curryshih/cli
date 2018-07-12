@@ -3,7 +3,7 @@ const tools = require('../../../tools');
 module.exports = async (step, meta) => {
 	if (!step) return { runable: false };
 	const { when, name, cmd } = step;
-	if (!cmd) return { runable: false };
+	if (!cmd) return { runable: false, name };
 	let runable = true;
 	if (when !== undefined) {
 		if (typeof (when) === 'string') {
@@ -12,7 +12,7 @@ module.exports = async (step, meta) => {
 			runable = when.every(w => !!tools.template(w, meta));
 		}
 	}
-	if (!runable) return { runable, name };
+	if (!runable) return { runable, name, cmd };
 	let cmdTpl = cmd;
 	if (Array.isArray(cmd)) cmdTpl = cmd.join(' ');
 	const stepCmd = tools.template(cmdTpl, meta);

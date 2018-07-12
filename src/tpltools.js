@@ -18,6 +18,7 @@ module.exports = {
 		const projectVars = ojp.get(rootMan, 'metadata.vars', {});
 		const svcVars = ojp.get(svcMan, 'metadata.vars', {});
 		const vars = deepExtend(projectVars, svcVars);
+		const dirs = ojp.get(rootMan, 'config.dirs');
 
 		const { GOPATH } = process.env;
 		const rootDirFromGoPath = rootDir.split(GOPATH)[1];
@@ -29,7 +30,7 @@ module.exports = {
 				package: rootMan.package,
 				name: rootMan.project,
 				gitSHA: gitSHA.toString().trim(),
-				dirs: rootMan.dirs,
+				dirs,
 				rootDir,
 				rootDirFromGoPath,
 				svcDir,

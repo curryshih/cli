@@ -11,6 +11,7 @@ Scope: `Global`
 ### Command: gok yml w [key value] -i input_file -o output_file
 
 This command reads the `input_file`, adds or overwrites the `value` at `key`, writes the result to the `output_file`.
+If `output_file` is not specified, `input_file` will be updated (overwrited).
 
 ## Delete
 

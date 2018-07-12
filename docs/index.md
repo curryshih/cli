@@ -56,6 +56,7 @@ $ cd client
 - [Gok run](commands/run.md)
 - [Gok task](commands/task.md)
 - [Gok yml](commands/yml.md)
+- [Gok interactiveconsole](commands/is.md)
 
 To allow typing of commands faster, refer to the [Command alias](others/alias.md) guide.
 Check [Gokums conventions](others/conventions.md) for better understanding of the `Gokums` implementation.

@@ -19,7 +19,7 @@ If the namespace does not exist, current available namespaces are `go`, `docker`
 ### Command: gok task run name
 
 `Gok` merges tasks from `Project` scope and `Service` scope, then executes the combined task.
-tFor how the tasks are merged, refer to [root.yaml configuration](../other/root.yaml.md).
+tFor how the tasks are merged, refer to [root.yaml configuration](../others/root.yaml.md).
 
 `Gok` runs task by [templating](../others/templating.md) steps, judging whether to perform it or not by evaluating the `when` property, and executing them serially one after each other.
 

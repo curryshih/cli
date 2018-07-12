@@ -275,6 +275,9 @@ const tools = {
 	inspect(obj) {
 		return util.inspect(obj, false, null);
 	},
+	argsSplit(args) {
+		return args.trim().match(/(?:[^\s"']+|"[^"]*"|'[^']*')+/g);
+	},
 };
 
 module.exports = tools;

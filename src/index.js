@@ -12,10 +12,22 @@ const run = require('./modules/run');
 const task = require('./modules/task');
 const plugin = require('./modules/plugin');
 const yml = require('./modules/yml');
+const interactiveconsole = require('./modules/gis');
 
 const argv = minimist(process.argv.slice(2));
 const modules = {
-	doctor, version, help, generate, build, flag, navigate, run, plugin, yml, task,
+	doctor,
+	version,
+	help,
+	generate,
+	build,
+	flag,
+	navigate,
+	run,
+	plugin,
+	yml,
+	task,
+	interactiveconsole,
 };
 
 // Alias first and second params of argv._

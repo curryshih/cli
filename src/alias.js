@@ -9,6 +9,7 @@ module.exports = {
 		d: 'deploy',
 		pl: 'plugin',
 		nav: 'navigate',
+		is: 'interactiveconsole',
 	},
 	second: {
 		p: 'proto',

@@ -24,7 +24,7 @@ Scope: `Project`
 The build process of proto and gateway heavily interact with `protoc` and `protoc-gen-*` plugins.
 For detailed configuration, refer to [root.yaml configuration](../others/root.yaml.md)
 
-### Proto Command: gok build proto [protoName...] [-genflag...]
+### Proto Command: gok build proto [protoName...] [--genflag...]
 
 If `protoName` is absent, `Gok` attempts to build all proto.
 
@@ -34,6 +34,6 @@ Here is the step to build one proto:
 - For each required generator, `Gok` writes a temporary shell script from its template, then includes `paths` and `mappings`. After that, the script is executed.
 - For each optional generator, `Gok` check if its name exists in the `genflag` list. If yes, it performs in the same way as required generator.
 
-### Gateway Command: gok build gateway [gatewayName...] [-genflag]
+### Gateway Command: gok build gateway [gatewayName...] [--genflag]
 
 Building gateway behaves exactly like the way proto works, only output and input directories are different.

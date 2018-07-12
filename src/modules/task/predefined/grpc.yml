@@ -1,0 +1,17 @@
+setup-client:
+  steps:
+    - name: Create jsbuild dir
+      cmd: rm -rf .build/js; mkdir -p .build/js
+    - name: Build dependency
+      cmd: npm install -g grpc grpc-tools google-protobuf@3.6.0
+    - name: Fix grpc 1.3.0 bug
+      cmd: wget https://raw.githubusercontent.com/gokums/grpc-node/master/packages/grpc-native-core/src/client_interceptors.js; mv client_interceptors.js `npm config get prefix`/lib/node_modules/grpc/src/
+build-js-proto:
+  steps:
+    - name: Build proto...
+      cmd: find <%= argv.in %> -type f -name "*.proto" -exec protoc <%=argv.paths%> --js_out=import_style=commonjs,binary:<%= argv.out %> --grpc_out=<%= argv.out %> --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` {} \;
+      when: <%= argv.in && argv.out %b>
+console:
+  steps:
+    - name: Starting console...
+      cmd: NODE_PATH="$(npm config get prefix)/lib/node_modules" gok is

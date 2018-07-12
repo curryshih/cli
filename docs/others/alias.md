@@ -19,6 +19,7 @@ Only the first and the second parameter have aliases.
 - `t`: task
 - `p`: plugin
 - `nav`: navigate
+- `is`: interactiveconsole
 
 ## Second
 

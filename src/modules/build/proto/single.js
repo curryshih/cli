@@ -11,7 +11,7 @@ module.exports = async (data, genflags, argv, tools) => {
 		command = `${command} ${cmd}`;
 	});
 
-	Object.keys(optional || {}).forEach((f) => {
+	Object.keys(argv || {}).forEach((f) => {
 		if (argv[f]) {
 			const cmd = tools.template(optional[f], data);
 			command = `${command} ${cmd}`;
@@ -20,6 +20,7 @@ module.exports = async (data, genflags, argv, tools) => {
 	log.l(`Generating ${target} source for ${data.filename}... `);
 
 	command = `${command} ${data.filename}`;
+	if (process.env.GOK_VERBOSE) console.log(command);
 
 	try {
 		tools.process.execSync(command, { cwd: data.rootDir, stdio: ['pipe', 'pipe', process.stderr] }).toString().replace('v', '').trim();
