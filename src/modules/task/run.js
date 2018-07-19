@@ -18,7 +18,7 @@ module.exports = async (argv, tools) => {
 	const mergedTasks = deepExtend(rootTasks, ojp.get(manifest, 'metadata.tasks'));
 
 	const shell = true;
-	const gitSHA = tools.process.execSync('git rev-parse --short HEAD', { cwd: rootDir, shell });
+	const gitSHA = tools.process.execSync('git rev-parse --short HEAD', { cwd: svcDir || rootDir, shell });
 
 	const theMeta = tplTools.tplMeta(argv, rootDir, meta, svcDir, manifest, gitSHA);
 
