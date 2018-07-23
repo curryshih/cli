@@ -64,6 +64,15 @@ async function restartProcess(svcName) {
 }
 
 async function startProcess(name, argv, gitSHA, prelog = '') {
+	if (!Services[name]) {
+		const snames = Object.keys(Services);
+		const guess = snames.find(n => n.indexOf(name) >= 0);
+		console.log(`Service with name ${name.green} does not exist.`);
+		if (guess) {
+			console.log(`Do you mean ${guess.green}`);
+		}
+		throw new Error('Can not locate services.');
+	}
 	const { svcDir, manifest } = Services[name];
 	console.log(`${prelog}[${name.green}]: Creating process wrapper`.cyan);
 
