@@ -75,7 +75,7 @@ async function startProcess(name, argv, gitSHA, prelog = '') {
 	// Template vars
 	const { vars } = theMeta;
 	console.log(`${prelog}[${name.green}]: Proceed with vars: ${tools.inspect(vars).cyan}`);
-	tplServices[name] = { vars };
+	tplServices[name] = vars;
 
 	const rootRunTask = ojp.get(RootManifest.meta, 'metadata.tasks.run', {});
 	const svcRunTask = ojp.get(manifest, 'metadata.tasks.run', {});

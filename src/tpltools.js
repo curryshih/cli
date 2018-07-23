@@ -3,12 +3,29 @@ const deepExtend = require('deep-extend');
 const ojp = require('object-path');
 const os = require('os');
 
-const generators = {};
+const tplData = {
+	generators: {},
+	mem: {},
+};
+
 const tplTools = {
 	next(schema, start) {
-		if (generators[schema]) return generators[schema].next().value;
-		generators[schema] = tools.generator(start);
+		if (tplData.generators[schema]) return tplData.generators[schema].next().value;
+		tplData.generators[schema] = tools.generator(start);
 		return start;
+	},
+	set(key, val) {
+		tplData.mem[key] = val;
+	},
+	get(key) {
+		return tplData.mem[key];
+	},
+	which(prog) {
+		try {
+			return tools.process.execSync(` which ${prog}`).toString().trim();
+		} catch (e) {
+			return '';
+		}
 	},
 };
 

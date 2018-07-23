@@ -31,3 +31,27 @@ It performs building a binary by calling `go build`.
 ### Command: gok task run-predefined namespace name
 
 `Gok` combines a temporary pull task and run task, it fetches the task, doesn't save anywhere, and perform a run on it.
+
+## tools.next
+
+If you notice, there's one piece called `tools.next('http', 1000)` in the `metadata.vars.port`, `next(key, startNum)` is a function that for each unique key, it creates a generator starts from `startNum`. So the first call of `tools.next('http', 1000)` will return `1000`, and the second call will return `1001`... You can use this tool to tell `Gok` to assign himself a port for every different service.
+
+## tools.which
+
+`tools.which` provides you a great way to know if a tool exists or not, for example this task install `cloudsql_proxy` if it doesn't exist:
+
+```YAML
+tasks:
+    cloudsql-proxy:
+        steps:
+        - name: Install cloud_sql_proxy
+            cmd: go get github.com/GoogleCloudPlatform/cloudsql-proxy/cmd/cloud_sql_proxy
+            when: <%= tools.which('cloud_sql_proxy') === "" %b>
+```
+
+
+
+
+
+
+
