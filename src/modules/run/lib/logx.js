@@ -21,15 +21,12 @@ module.exports = (prefix, data) => {
 				}
 				delete obj.eventTime;
 
-				// if (obj.caller.indexOf('log/log.go:') === 0) {
-				// 	return console.log(obj.message);
-				// }
-
 				return console.log(util.inspect(obj, false, null));
 			} catch (e) {
 				return console.log(line);
 			}
 		});
+		return null;
 	} catch (e) {
 		// Just ignore if can not parse json
 	}
