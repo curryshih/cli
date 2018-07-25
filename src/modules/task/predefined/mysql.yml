@@ -16,6 +16,10 @@ restart:
   steps:
   - name: Restarting
     cmd: docker restart mysqld57
+stop:
+  steps:
+  - name: Stopping
+    cmd: docker stop mysqld57
 delete-all:
   steps:
   - name: Stop mysql
