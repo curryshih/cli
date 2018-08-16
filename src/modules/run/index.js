@@ -169,13 +169,13 @@ module.exports = async (argv) => {
 
 	const rs = repl.start(replOpts);
 	_.each(Services, (serv, name) => {
-		if (!serv.run) return;
+		if (!serv.process) return;
 		rs.defineCommand(`kill_${name}`, {
 			help: `Killing service ${name}`,
 			action() {
-				if (!serv.run) return;
-				if (serv.run.proc) {
-					serv.run.proc.kill();
+				if (!serv.process) return;
+				if (serv.process.proc) {
+					serv.process.proc.kill();
 				}
 				this.displayPrompt();
 			},
