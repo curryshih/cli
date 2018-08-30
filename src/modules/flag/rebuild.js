@@ -12,6 +12,7 @@ module.exports = async (argv, tools) => {
 		const flagfile = flagtpl(manifest.metadata.flags);
 		tools.writeFilePath(`${svcDir}/args/flag.go`, flagfile);
 		tools.process.execSync(`go fmt ${svcDir}/args/flag.go`);
+		tools.process.execSync(`goimports -w ${svcDir}/args/flag.go`);
 
 		waiterEnd(' ok.');
 	} catch (e) {
