@@ -13,6 +13,7 @@ const task = require('./modules/task');
 const plugin = require('./modules/plugin');
 const yml = require('./modules/yml');
 const interactiveconsole = require('./modules/gis');
+const goktools = require('./modules/tools');
 
 const argv = minimist(process.argv.slice(2));
 const modules = {
@@ -28,6 +29,7 @@ const modules = {
 	yml,
 	task,
 	interactiveconsole,
+	tools: goktools,
 };
 
 // Alias first and second params of argv._
