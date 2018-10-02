@@ -1,6 +1,6 @@
 {
   "name": "gokums-cli",
-  "version": "1.2.15",
+  "version": "1.2.16",
   "description": "Client for Gokums Framework",
   "main": "index.js",
   "scripts": {

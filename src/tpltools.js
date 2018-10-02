@@ -27,6 +27,9 @@ const tplTools = {
 			return '';
 		}
 	},
+	cancel(err) {
+		throw new Error(err);
+	},
 };
 
 module.exports = {

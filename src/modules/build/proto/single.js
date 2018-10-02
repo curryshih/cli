@@ -12,7 +12,7 @@ module.exports = async (data, genflags, argv, tools) => {
 	});
 
 	Object.keys(argv || {}).forEach((f) => {
-		if (argv[f]) {
+		if (argv[f] && f !== '_') {
 			const cmd = tools.template(optional[f], data);
 			command = `${command} ${cmd}`;
 		}
