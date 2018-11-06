@@ -54,7 +54,11 @@ module.exports = async (argv, tools) => {
 			const { runable, name, cmd } = await checkStep(steps[j], theMeta);
 			if (runable) {
 				console.log(`About to run: ${(name || cmd).cyan}`);
-				tools.process.spawnSync(cmd, options);
+				const res = tools.process.spawnSync(cmd, options);
+				if (res.status !== 0) {
+					console.log('Stop due to non-sucessfull exit in step.');
+					break;
+				}
 			} else {
 				console.log(`Ignore: ${(name || cmd).cyan}`);
 			}
