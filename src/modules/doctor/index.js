@@ -155,6 +155,19 @@ module.exports = async (argv, tools) => {
 		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
 	}
 
+	// @ Check helm
+	stopWaiting = log.waiter('Checking helm version... ');
+	try {
+		const helmVersion = tools.process.execSync('make --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().trim();
+		if (!helmVersion) {
+			stopWaiting(` ${'NG'.red}, please install helm at https://docs.helm.sh/using_helm/#installing-helm`);
+		} else {
+			stopWaiting(` ${'OK'.green}`);
+		}
+	} catch (err) {
+		stopWaiting(` ${'NG'.red}: ${err.toString()}`);
+	}
+
 	// @ Check GOPATH
 	stopWaiting = log.waiter('Checking GOPATH... ');
 	if (!process.env.GOPATH) {
@@ -177,11 +190,11 @@ module.exports = async (argv, tools) => {
 		}
 		plug = 'github.com/gokums/go-proto-validators/protoc-gen-govalidators';
 		if (plugins.indexOf(plug) < 0) {
-			log.ln(`  You may want to install protoc-gen-govalidators with ${'gok plugin add'.cyan} ${plug.cyan}`);
+			log.ln(`  [Optional] Install protoc-gen-govalidators with ${'gok plugin add'.grey} ${plug.grey}`.grey);
 		}
 		plug = 'github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger';
 		if (plugins.indexOf(plug) < 0) {
-			log.ln(`  You may want to install protoc-gen-swagger with ${'gok plugin add'.cyan} ${plug.cyan}`);
+			log.ln(`  [Optional] Install protoc-gen-swagger with ${'gok plugin add'.cyan} ${plug.cyan}`);
 		}
 		if (plugins.length > 0) {
 			const confDirs = tools.getConfigDirs(rootDir, meta);
