@@ -36,6 +36,10 @@ const tools = {
 				console.log(...msgs);
 			};
 		},
+		fatal(...args) {
+			console.log(...args);
+			process.exit(1);
+		},
 	},
 	regex: {
 		path: /^[a-z]([a-z0-9_.-]+\/{0,1})+[a-z]+[a-z0-9]*$/,
