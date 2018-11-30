@@ -18,11 +18,11 @@ const tplTools = {
 		tplData.mem[key] = val;
 	},
 	get(key) {
-		return tplData.mem[key];
+		return ojp.get(tplData.mem, key, null);
 	},
 	which(prog) {
 		try {
-			return tools.process.execSync(` which ${prog}`).toString().trim();
+			return tools.process.execSync(`which ${prog}`).toString().trim();
 		} catch (e) {
 			return '';
 		}
