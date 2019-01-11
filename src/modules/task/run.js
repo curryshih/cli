@@ -80,9 +80,7 @@ module.exports = async (argv, tools) => {
 								opts,
 							);
 							if (res.status !== 0) {
-								console.log('Stop due to non-sucessfull exit in sub step.');
-								broken = true;
-								break;
+								throw new Error('Stop due to non-sucessfull exit in sub step.');
 							}
 							if (substeps[ssi].break) {
 								console.log('Stop due to break control');
@@ -110,8 +108,7 @@ module.exports = async (argv, tools) => {
 					const opts = pipe || store || storeYaml || storeJSON ? pipeOptions : options;
 					const res = tools.process.spawnSync(cmd, opts);
 					if (res.status !== 0) {
-						console.log('Stop due to non-sucessfull exit in step.');
-						break;
+						throw new Error('Stop due to non-sucessfull exit in step.');
 					}
 					const stdout = res.stdout && res.stdout.toString().trim();
 					if (pipe) theMeta.pipe = stdout;
