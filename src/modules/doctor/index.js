@@ -30,9 +30,10 @@ module.exports = async (argv, tools) => {
 	// @ Check node
 	stopWaiting = log.waiter('Checking Node.js... ');
 	try {
+		const expectedNodeVersion = '8.0.0';
 		const nodeVersion = tools.process.execSync('node --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('v', '').trim();
-		if (nodeVersion < '8.0.0') {
-			stopWaiting(` version ${nodeVersion} ${'NG'.red}, expect >= 8.0.0`);
+		if (parseInt(nodeVersion.split('.')[0]) < parseInt(expectedNodeVersion.split('.')[0])) {
+			stopWaiting(` version ${nodeVersion} ${'NG'.red}, expect >= ${expectedNodeVersion}`);
 		} else {
 			stopWaiting(` version ${nodeVersion} ${'OK'.green}`);
 		}
@@ -82,9 +83,13 @@ module.exports = async (argv, tools) => {
 	// @ Check protoc tool
 	stopWaiting = log.waiter('Checking protoc... ');
 	try {
+		const expectedProtocVersion = '3.5.0';
 		const protocVersion = tools.process.execSync('protoc --version', { stdio: ['pipe', 'pipe', 'ignore'] }).toString().replace('libprotoc', '').trim();
-		if (protocVersion < '3.5.0') {
-			stopWaiting(` version ${protocVersion} ${'NG'.red}, expect >= 3.5.0`);
+		if (parseInt(protocVersion.split('.')[0]) < parseInt(expectedProtocVersion.split('.')[0])) {
+			stopWaiting(` version ${protocVersion} ${'NG'.red}, expect >= ${expectedProtocVersion}`);
+		} else if (parseInt(protocVersion.split('.')[0]) == parseInt(expectedProtocVersion.split('.')[0]) 
+			&& parseInt(protocVersion.split('.')[1]) < parseInt(expectedProtocVersion.split('.')[1])) {
+			stopWaiting(` version ${protocVersion} ${'NG'.red}, expect >= ${expectedProtocVersion}`);
 		} else {
 			stopWaiting(` version ${protocVersion} ${'OK'.green}`);
 		}
